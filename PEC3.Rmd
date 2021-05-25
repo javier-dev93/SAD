@@ -106,3 +106,112 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 
 ```
+
+---
+title: "PEC2"
+author: "Alba Machado López - Javier Pueyo Aina"
+date: "24/5/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Sección 1.
+
+### Ejercicio 1
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+### Ejercicio 2
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Ejercicio 3
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Ejercicio 4
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Ejercicio 5
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Ejercicio 6
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Ejercicio 7
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Ejercicio 8
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+# Sección 2. Análisis cluster con R
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
