@@ -25,8 +25,13 @@ names(data) <- c("birads","age","shape","margin","density","severity")
 ```
 
 ```{r}
-
+dim(data)
 ```
+
+```{r}
+str(data)
+```
+
 
 
 ### Ejercicio 2
