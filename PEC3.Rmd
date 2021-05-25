@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ---
 title: "PEC2"
 author: "Alba Machado López - Javier Pueyo Aina"
