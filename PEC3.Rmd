@@ -1,9 +1,12 @@
 ---
-title: "PEC2"
+title: "PEC 3"
 author: "Alba Machado López - Javier Pueyo Aina"
 date: "25/5/2021"
 output:
-  html_document: default
+  html_document:
+    toc: yes
+    toc_depth: 2
+    number_sections: no
   pdf_document: default
 ---
 
@@ -11,17 +14,58 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-pruebas git
+
+```{css, echo=FALSE}
+p {
+  text-align: justify
+}
+
+p.caption {
+  font-size: 0.9em;
+  font-style: italic;
+  color: grey;
+  margin-right: 10%;
+  margin-left: 0%;  
+  text-align: justify;
+}
+
+h1 {
+  font-size: 2em;
+  color: SteelBlue;
+  text-align: justify
+}
+
+h2 {
+  font-size: 1.7em;
+  color: SteelBlue;
+  text-align: justify
+}
+
+h3 {
+  font-size: 1.5em;
+  color: SteelBlue;
+  text-align: justify
+}
+.header-section-number::after {
+  content: ".";
+}
+ol {
+  font-size: 1em;
+  color: SteelBlue;
+  text-align: justify
+}
+```
 
 # Sección 1.
 
-### Ejercicio 1
+## Ejercicio 1
+<span style="color: SteelBlue;">Buscad un conjunto de datos relacionados con la Bioestadística o Bioinformáti-ca. Para ello, podéis utilizar algunos recursos conocidos como es el caso de http://www.bioinformatics.org/sms2/index.html o de http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets.  También podéis utilizar otros recursos propios que conozcáis o que sean de vuestro interés, y siempre teniendo en cuenta que sean datos públicos que podéis utilizar.  Tenéis que ex-plicar la procedencia de los datos así como incluir las referencias que corre-spondan y justificar porqué habéis elegido estos datos.</span>
 
 ```{r}
 #Busqueda de conjunto de datos
-data<-read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/mammographic-masses/mammographic_masses.data",stringsAsFactors = FALSE,header=T,sep=",")
+data<-read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/00383/risk_factors_cervical_cancer.csv",stringsAsFactors = FALSE,header=T,sep=",")
 
-names(data) <- c("birads","age","shape","margin","density","severity")
+#names(data) <- c("birads","age","shape","margin","density","severity")
 ```
 
 ```{r}
@@ -34,7 +78,9 @@ str(data)
 
 
 
-### Ejercicio 2
+## Ejercicio 2
+
+<span style="color: SteelBlue;">Utilizando R, mostrad y explicad qué tipo de fichero habéis importado y las variables que forman parte de él (tipo, clasificación,...), así como todo aquello que creáis relevante. Incluir capturas de pantalla y las instrucciones en R que habéis utilizado para importar y  mostrar los datos.</span>
 
 ```{r}
 
@@ -46,15 +92,13 @@ str(data)
 
 ### Ejercicio 3
 
-```{r}
+<span style="color: SteelBlue;">) Realizad un mínimo de seis preguntas objetivo que den una idea de la infor-mación contenida en el conjunto de datos escogido, es decir, obtener infor-mación del conjunto de datos a partir de determinados criterios, según varia-bles, o rangos de valores, etc... Para ello, podéis basaros en el tipo de consultas realizadas en la PEC1 y también utilizando, en alguno de los casos, la defini-ción de funciones tal como se trabaja en el LAB3.</span>
 
-```
 
-```{r}
-
-```
 
 ### Ejercicio 4
+
+<span style="color: SteelBlue;">Realizad un análisis descriptivo de los datos. Este estudio debe incluir, un re-sumen paramétrico de los datos y diversas representaciones gráficas de los mismos basadas en determinados criterios. Dejamos a vuestra elección el tipo de gráficos y los criterios utilizados.</span>
 
 ```{r}
 
@@ -66,6 +110,8 @@ str(data)
 
 ### Ejercicio 5
 
+<span style="color: SteelBlue;">Realizad, basándoos en los conceptos trabajados en el LAB4 y PEC2, un mí-nimo de tres enunciados que respondan a una cuestión de probabilidad y un mí-nimo de un enunciado que corresponda a un breve modelo de simulación. En este caso, si vuestro conjunto de datos no propicia estos enunciados, podéis generar una o diversas distribuciones en base a unos parámetros determinados definidos por vosotros.</span>
+
 ```{r}
 
 ```
@@ -75,6 +121,8 @@ str(data)
 ```
 
 ### Ejercicio 6
+
+<span style="color: SteelBlue;">Realizad un breve análisis de regresión (lineal y múltiple) a partir de las varia-bles que disponéis y utilizando el criterio que responda a alguna pregunta de interés que os hayáis planteado.</span>
 
 ```{r}
 
@@ -86,6 +134,8 @@ str(data)
 
 ### Ejercicio 7
 
+<span style="color: SteelBlue;">A partir del conjunto de datos que estáis trabajando, plantead un estudio ANO-VA y desarrollado si, a partir del estudio previo, se cumplen las condiciones.</span>
+
 ```{r}
 
 ```
@@ -95,6 +145,8 @@ str(data)
 ```
 
 ### Ejercicio 8
+
+<span style="color: SteelBlue;">A partir de los datos de origen y el estudio realizado, haced una valoración fi-nal. Para ello, podéis basaros en las siguientes preguntas: "disponemos de con-clusiones finales?", "sería necesario hacer un análisis más avanzado?", "faltan datos para obtener otro tipo de información como...?",....</span>
 
 ```{r}
 
