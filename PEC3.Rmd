@@ -92,22 +92,13 @@ str(data)
 
 ## Ejercicio 3
 
-<<<<<<< HEAD
 <span style="color: SteelBlue;">) Realizad un mínimo de seis preguntas objetivo que den una idea de la información contenida en el conjunto de datos escogido, es decir, obtener infor-mación del conjunto de datos a partir de determinados criterios, según varia-bles, o rangos de valores, etc... Para ello, podéis basaros en el tipo de consultas realizadas en la PEC1 y también utilizando, en alguno de los casos, la defini-ción de funciones tal como se trabaja en el LAB3.</span>
 
-
-
-=======
-<span style="color: SteelBlue;">) Realizad un mínimo de seis preguntas objetivo que den una idea de la infor-mación contenida en el conjunto de datos escogido, es decir, obtener infor-mación del conjunto de datos a partir de determinados criterios, según varia-bles, o rangos de valores, etc... Para ello, podéis basaros en el tipo de consultas realizadas en la PEC1 y también utilizando, en alguno de los casos, la defini-ción de funciones tal como se trabaja en el LAB3.</span>
-
-
->>>>>>> 69194aedda9d95fe57d9542d30111571a377c139
 
 ## Ejercicio 4
 
 <span style="color: SteelBlue;">Realizad un análisis descriptivo de los datos. Este estudio debe incluir, un re-sumen paramétrico de los datos y diversas representaciones gráficas de los mismos basadas en determinados criterios. Dejamos a vuestra elección el tipo de gráficos y los criterios utilizados.</span>
 
-<span style="color: SteelBlue;">Realizad un análisis descriptivo de los datos. Este estudio debe incluir, un re-sumen paramétrico de los datos y diversas representaciones gráficas de los mismos basadas en determinados criterios. Dejamos a vuestra elección el tipo de gráficos y los criterios utilizados.</span>
 
 ```{r}
 
@@ -121,7 +112,6 @@ str(data)
 
 <span style="color: SteelBlue;">Realizad, basándoos en los conceptos trabajados en el LAB4 y PEC2, un mí-nimo de tres enunciados que respondan a una cuestión de probabilidad y un mí-nimo de un enunciado que corresponda a un breve modelo de simulación. En este caso, si vuestro conjunto de datos no propicia estos enunciados, podéis generar una o diversas distribuciones en base a unos parámetros determinados definidos por vosotros.</span>
 
-<span style="color: SteelBlue;">Realizad, basándoos en los conceptos trabajados en el LAB4 y PEC2, un mí-nimo de tres enunciados que respondan a una cuestión de probabilidad y un mí-nimo de un enunciado que corresponda a un breve modelo de simulación. En este caso, si vuestro conjunto de datos no propicia estos enunciados, podéis generar una o diversas distribuciones en base a unos parámetros determinados definidos por vosotros.</span>
 
 ```{r}
 
@@ -135,7 +125,6 @@ str(data)
 
 <span style="color: SteelBlue;">Realizad un breve análisis de regresión (lineal y múltiple) a partir de las varia-bles que disponéis y utilizando el criterio que responda a alguna pregunta de interés que os hayáis planteado.</span>
 
-<span style="color: SteelBlue;">Realizad un breve análisis de regresión (lineal y múltiple) a partir de las varia-bles que disponéis y utilizando el criterio que responda a alguna pregunta de interés que os hayáis planteado.</span>
 
 ```{r}
 
@@ -149,7 +138,7 @@ str(data)
 
 <span style="color: SteelBlue;">A partir del conjunto de datos que estáis trabajando, plantead un estudio ANO-VA y desarrollado si, a partir del estudio previo, se cumplen las condiciones.</span>
 
-<span style="color: SteelBlue;">A partir del conjunto de datos que estáis trabajando, plantead un estudio ANO-VA y desarrollado si, a partir del estudio previo, se cumplen las condiciones.</span>
+
 
 ```{r}
 
@@ -163,7 +152,6 @@ str(data)
 
 <span style="color: SteelBlue;">A partir de los datos de origen y el estudio realizado, haced una valoración fi-nal. Para ello, podéis basaros en las siguientes preguntas: "disponemos de con-clusiones finales?", "sería necesario hacer un análisis más avanzado?", "faltan datos para obtener otro tipo de información como...?",....</span>
 
-<span style="color: SteelBlue;">A partir de los datos de origen y el estudio realizado, haced una valoración fi-nal. Para ello, podéis basaros en las siguientes preguntas: "disponemos de con-clusiones finales?", "sería necesario hacer un análisis más avanzado?", "faltan datos para obtener otro tipo de información como...?",....</span>
 
 ```{r}
 
