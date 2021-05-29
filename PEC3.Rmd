@@ -56,10 +56,29 @@ ol {
 }
 ```
 
-# Sección 1.
+# Sección 1
 
 ## Ejercicio 1
-<span style="color: SteelBlue;">Buscad un conjunto de datos relacionados con la Bioestadística o Bioinformáti-ca. Para ello, podéis utilizar algunos recursos conocidos como es el caso de http://www.bioinformatics.org/sms2/index.html o de http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets.  También podéis utilizar otros recursos propios que conozcáis o que sean de vuestro interés, y siempre teniendo en cuenta que sean datos públicos que podéis utilizar.  Tenéis que ex-plicar la procedencia de los datos así como incluir las referencias que corre-spondan y justificar porqué habéis elegido estos datos.</span>
+
+<span style="color: SteelBlue;">Buscad un conjunto de datos relacionados con la Bioestadística o Bioinformática. Para ello, podéis utilizar algunos recursos conocidos como es el caso de http://www.bioinformatics.org/sms2/index.html o de http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets.  También podéis utilizar otros recursos propios que conozcáis o que sean de vuestro interés, y siempre teniendo en cuenta que sean datos públicos que podéis utilizar.  Tenéis que explicar la procedencia de los datos así como incluir las referencias que correspondan y justificar porqué habéis elegido estos datos.</span>
+
+Existen numerosas opciones disponibles donde obtener conjuntos de datos, entre las que se encuentran, además de las mencionadas por el propio ejercicio, [kaggle](https://www.kaggle.com/) o [data.world](https://data.world/data-society/health-status-indicators). En nuestro caso, el conjunto de datos que hemos seleccionado proviene del [repositorio de Machine Learning UC Irvine](http://archive.ics.uci.edu/ml/index.php), que contiene una colección de conjuntos de datos públicos procedentes de distintas fuentes y que facilita, de un primer vistazo, identificar las características de los conjuntos de datos e incluso los tipos de análisis que se les podrían aplicar. 
+
+A la hora de seleccionar un conjunto de datos, tratamos de buscar alguno que tuviera un buen número de registros y bastantes variables de todos los tipos (numéricas, categóricas, booleanas...) de modo que existieran muchas posibilidades a la hora de explorar los datos e intentar obtener conclusiones. Con respecto al tema, nos centramos en buscar conjuntos de datos relacionados con el campo de la oncología, ya que se trata de una disciplina en la que los dos tenemos cierta experiencia y nos permitirá comprender mejor los datos e interpretar los resultados de los análisis que realizaremos.
+
+En base a estas características, encontramos el conjunto de datos que finalmente hemos seleccionado, llamado [Cervical cancer (Risk Factors) Data Set](http://archive.ics.uci.edu/ml/datasets/Cervical+cancer+%28Risk+Factors%29). Este conjunto de datos contiene información demográfica, clínica y sobre hábitos de vida de mujeres tratadas en el Hospital Universitario de Caracas (Caracas, Venezuela). Más concretamente, este conjunto de datos se define en el capítulo _Transfer Learning with Partial Observability Applied to Cervical Cancer Screening_ [1], en el que se utiliza para evaluar una estrategia de aprendizaje por transferencia (*transfer learning*, utilizar un modelo pre-entrenado en un problema distinto al inicial) en la predicción de riesgo de cáncer de cervix.
+
+A modo de introducción, el cáncer de cérvix (también llamado cáncer cervical o cáncer de cuello uterino) es el cuarto tipo de cáncer más común en mujeres, con tasas de mortalidad elevadas que varían según el país (en países desarrollados son menores debido a diferencias en el acceso a servicios de salud y hábitos de vida) [2]. 
+
+Al inicio de la enfermedad, el cáncer de cérvix suele ser asintomático, aunque puede presentarse con sangrado excesivo y avanzar a dolor abdominal u otros síntomas. El diagnóstico de este tipo de cáncer comienza con la examinación de la paciente para detectar masas anormales, seguido de otras pruebas como la de Papanicolaou, la colposcopia o la examinación histopatológica de la biopsia. El tratamiento de esta enfermedad puede incluir quimioterapia, radioterapia e inmunoterapia, aunque en la mayoría de casos estos son tratamientos adyuvantes a una intervención quirúrgica [3].
+
+Las tasas de éxito de estos tratamientos son variables, por lo que gran parte de los esfuerzos de la investigación científica en el cáncer de cervix se están centrando en su prevención y detección temprana. Es en estos casos en los que conjuntos de datos como el que se va a trabajar en esta PEC ganan relevancia, resaltando la utilidad de la bioinformática y la bioestadística como una herramienta de aplicación traslacional que pueda ser empleada en la clínica. 
+
+
+
+## Ejercicio 2
+
+<span style="color: SteelBlue;">Utilizando R, mostrad y explicad qué tipo de fichero habéis importado y las variables que forman parte de él (tipo, clasificación,...), así como todo aquello que creáis relevante. Incluir capturas de pantalla y las instrucciones en R que habéis utilizado para importar y  mostrar los datos.</span>
 
 ```{r}
 #Busqueda de conjunto de datos
@@ -76,12 +95,6 @@ dim(data)
 str(data)
 ```
 
-
-
-## Ejercicio 2
-
-<span style="color: SteelBlue;">Utilizando R, mostrad y explicad qué tipo de fichero habéis importado y las variables que forman parte de él (tipo, clasificación,...), así como todo aquello que creáis relevante. Incluir capturas de pantalla y las instrucciones en R que habéis utilizado para importar y  mostrar los datos.</span>
-
 ```{r}
 
 ```
@@ -92,11 +105,17 @@ str(data)
 
 ## Ejercicio 3
 
-<span style="color: SteelBlue;">) Realizad un mínimo de seis preguntas objetivo que den una idea de la información contenida en el conjunto de datos escogido, es decir, obtener infor-mación del conjunto de datos a partir de determinados criterios, según varia-bles, o rangos de valores, etc... Para ello, podéis basaros en el tipo de consultas realizadas en la PEC1 y también utilizando, en alguno de los casos, la defini-ción de funciones tal como se trabaja en el LAB3.</span>
+<span style="color: SteelBlue;"> Realizad un mínimo de seis preguntas objetivo que den una idea de la información contenida en el conjunto de datos escogido, es decir, obtener infor-mación del conjunto de datos a partir de determinados criterios, según varia-bles, o rangos de valores, etc... Para ello, podéis basaros en el tipo de consultas realizadas en la PEC1 y también utilizando, en alguno de los casos, la definición de funciones tal como se trabaja en el LAB3.</span>
 
 ### Pregunta 1
 
-En primer lugar, dado que los propios autores del dataset advierten que hubo pacientes que decidieron responder a algunas preguntas por cuestiones de privacidad, nos preguntamos ¿Cuántos valores faltantes (missing values) hay en el dataset? ¿Se concentran en alguna variable en concreto?
+En primer lugar, dado que los propios autores del dataset advierten que hubo pacientes que decidieron responder a algunas preguntas por cuestiones de privacidad, nos preguntamos ¿Cuántos valores faltantes (*missing values*) hay en el dataset? ¿Se concentran en alguna variable en concreto?
+
+```{r}
+
+```
+
+Como los propios autores indican [1], estos valores faltantes pueden "imputarse" usando la media muestral, ya que, aunque sería preferible tener los datos reales, es mejor que eliminar a una paciente del conjunto de datos sólo por tener valores faltantes en alguna de las variables. 
 
 ```{r}
 
@@ -148,10 +167,9 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 
 
 
-
 ## Ejercicio 4
 
-<span style="color: SteelBlue;">Realizad un análisis descriptivo de los datos. Este estudio debe incluir, un re-sumen paramétrico de los datos y diversas representaciones gráficas de los mismos basadas en determinados criterios. Dejamos a vuestra elección el tipo de gráficos y los criterios utilizados.</span>
+<span style="color: SteelBlue;">Realizad un análisis descriptivo de los datos. Este estudio debe incluir, un resumen paramétrico de los datos y diversas representaciones gráficas de los mismos basadas en determinados criterios. Dejamos a vuestra elección el tipo de gráficos y los criterios utilizados.</span>
 
 
 ```{r}
@@ -164,7 +182,7 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 
 ## Ejercicio 5
 
-<span style="color: SteelBlue;">Realizad, basándoos en los conceptos trabajados en el LAB4 y PEC2, un mí-nimo de tres enunciados que respondan a una cuestión de probabilidad y un mí-nimo de un enunciado que corresponda a un breve modelo de simulación. En este caso, si vuestro conjunto de datos no propicia estos enunciados, podéis generar una o diversas distribuciones en base a unos parámetros determinados definidos por vosotros.</span>
+<span style="color: SteelBlue;">Realizad, basándoos en los conceptos trabajados en el LAB4 y PEC2, un mínimo de tres enunciados que respondan a una cuestión de probabilidad y un mínimo de un enunciado que corresponda a un breve modelo de simulación. En este caso, si vuestro conjunto de datos no propicia estos enunciados, podéis generar una o diversas distribuciones en base a unos parámetros determinados definidos por vosotros.</span>
 
 
 ```{r}
@@ -177,7 +195,7 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 
 ## Ejercicio 6
 
-<span style="color: SteelBlue;">Realizad un breve análisis de regresión (lineal y múltiple) a partir de las varia-bles que disponéis y utilizando el criterio que responda a alguna pregunta de interés que os hayáis planteado.</span>
+<span style="color: SteelBlue;">Realizad un breve análisis de regresión (lineal y múltiple) a partir de las variables que disponéis y utilizando el criterio que responda a alguna pregunta de interés que os hayáis planteado.</span>
 
 
 ```{r}
@@ -190,7 +208,7 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 
 ## Ejercicio 7
 
-<span style="color: SteelBlue;">A partir del conjunto de datos que estáis trabajando, plantead un estudio ANO-VA y desarrollado si, a partir del estudio previo, se cumplen las condiciones.</span>
+<span style="color: SteelBlue;">A partir del conjunto de datos que estáis trabajando, plantead un estudio ANOVA y desarrollado si, a partir del estudio previo, se cumplen las condiciones.</span>
 
 
 
@@ -228,3 +246,11 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 
 ```
 
+
+# Referencias
+
+-  **[1]**: Fernandes, K., Cardoso, J.S., Fernandes, J. (2017) Transfer Learning with Partial Observability Applied to Cervical Cancer Screening. In: Alexandre L., Salvador Sánchez J., Rodrigues J. (eds) Pattern Recognition and Image Analysis. IbPRIA 2017. Lecture Notes in Computer Science, vol 10255. Springer, Cham. https://doi.org/10.1007/978-3-319-58838-4_27
+
+- **[2]**: Buskwofie, A., David-West, G., & Clare, C. A. (2020). A Review of Cervical Cancer: Incidence and Disparities. Journal of the National Medical Association, 112(2), 229–232. https://doi.org/10.1016/j.jnma.2020.03.002 
+
+- **[3]**: Johnson, C. A., James, D., Marzan, A., & Armaos, M. (2019). Cervical Cancer: An Overview of Pathophysiology and Management. Seminars in oncology nursing, 35(2), 166–174. https://doi.org/10.1016/j.soncn.2019.02.003
