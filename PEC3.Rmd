@@ -66,14 +66,13 @@ Existen numerosas opciones disponibles donde obtener conjuntos de datos, entre l
 
 A la hora de seleccionar un conjunto de datos, tratamos de buscar alguno que tuviera un buen número de registros y bastantes variables de todos los tipos (numéricas, categóricas, booleanas...) de modo que existieran muchas posibilidades a la hora de explorar los datos e intentar obtener conclusiones. Con respecto al tema, nos centramos en buscar conjuntos de datos relacionados con el campo de la oncología, ya que se trata de una disciplina en la que los dos tenemos cierta experiencia y nos permitirá comprender mejor los datos e interpretar los resultados de los análisis que realizaremos.
 
-En base a estas características, encontramos el conjunto de datos que finalmente hemos seleccionado, llamado [Cervical cancer (Risk Factors) Data Set](http://archive.ics.uci.edu/ml/datasets/Cervical+cancer+%28Risk+Factors%29). Este conjunto de datos contiene información demográfica, clínica y sobre hábitos de vida de mujeres tratadas en el Hospital Universitario de Caracas (Caracas, Venezuela). Más concretamente, este conjunto de datos se define en el capítulo _Transfer Learning with Partial Observability Applied to Cervical Cancer Screening_ [1], en el que se utiliza para evaluar una estrategia de aprendizaje por transferencia (*transfer learning*, utilizar un modelo pre-entrenado en un problema distinto al inicial) en la predicción de riesgo de cáncer de cervix.
+En base a estas características, encontramos el conjunto de datos que finalmente hemos seleccionado, llamado [Cervical cancer (Risk Factors) Data Set](http://archive.ics.uci.edu/ml/datasets/Cervical+cancer+%28Risk+Factors%29). Este conjunto de datos contiene información demográfica, clínica y sobre hábitos de vida de mujeres tratadas en el Hospital Universitario de Caracas (Caracas, Venezuela). Más concretamente, este conjunto de datos se define en el capítulo _Transfer Learning with Partial Observability Applied to Cervical Cancer Screening_ [**1**], en el que se utiliza para evaluar una estrategia de aprendizaje por transferencia (*transfer learning*, utilizar un modelo pre-entrenado en un problema distinto al inicial) en la predicción de riesgo de cáncer de cervix.
 
-A modo de introducción, el cáncer de cérvix (también llamado cáncer cervical o cáncer de cuello uterino) es el cuarto tipo de cáncer más común en mujeres, con tasas de mortalidad elevadas que varían según el país (en países desarrollados son menores debido a diferencias en el acceso a servicios de salud y hábitos de vida) [2]. 
+A modo de introducción, el cáncer de cérvix (también llamado cáncer cervical o cáncer de cuello uterino) es el cuarto tipo de cáncer más común en mujeres, con tasas de mortalidad elevadas que varían según el país (en países desarrollados son menores debido a diferencias en el acceso a servicios de salud y hábitos de vida) [**2**]. 
 
-Al inicio de la enfermedad, el cáncer de cérvix suele ser asintomático, aunque puede presentarse con sangrado excesivo y avanzar a dolor abdominal u otros síntomas. El diagnóstico de este tipo de cáncer comienza con la examinación de la paciente para detectar masas anormales, seguido de otras pruebas como la de Papanicolaou, la colposcopia o la examinación histopatológica de la biopsia. El tratamiento de esta enfermedad puede incluir quimioterapia, radioterapia e inmunoterapia, aunque en la mayoría de casos estos son tratamientos adyuvantes a una intervención quirúrgica [3].
+Al inicio de la enfermedad, el cáncer de cérvix suele ser asintomático, aunque puede presentarse con sangrado excesivo y avanzar a dolor abdominal u otros síntomas. El diagnóstico de este tipo de cáncer comienza con la examinación de la paciente para detectar masas anormales, seguido de otras pruebas como la de Papanicolaou, la colposcopia o la examinación histopatológica de la biopsia. El tratamiento de esta enfermedad puede incluir quimioterapia, radioterapia e inmunoterapia, aunque en la mayoría de casos estos son tratamientos adyuvantes a una intervención quirúrgica [**3**].
 
-Las tasas de éxito de estos tratamientos son variables, por lo que gran parte de los esfuerzos de la investigación científica en el cáncer de cervix se están centrando en su prevención y detección temprana. Es en estos casos en los que conjuntos de datos como el que se va a trabajar en esta PEC ganan relevancia, resaltando la utilidad de la bioinformática y la bioestadística como una herramienta de aplicación traslacional que pueda ser empleada en la clínica. 
-
+Las tasas de éxito de estos tratamientos son variables, por lo que gran parte de los esfuerzos de la investigación científica en el cáncer de cervix se están centrando en su prevención y detección temprana. Es en estos casos en los que conjuntos de datos como el que se va a trabajar en esta PEC ganan relevancia, resaltando la utilidad de la bioinformática y la bioestadística como una herramienta de aplicación traslacional que pueda ser empleada en la práctica clínica. 
 
 
 ## Ejercicio 2
@@ -115,7 +114,7 @@ En primer lugar, dado que los propios autores del dataset advierten que hubo pac
 
 ```
 
-Como los propios autores indican [1], estos valores faltantes pueden "imputarse" usando la media muestral, ya que, aunque sería preferible tener los datos reales, es mejor que eliminar a una paciente del conjunto de datos sólo por tener valores faltantes en alguna de las variables. 
+Como los propios autores indican [**1**], estos valores faltantes pueden "imputarse" usando la media muestral, ya que, aunque sería preferible tener los datos reales, es mejor que eliminar a una paciente del conjunto de datos sólo por tener valores faltantes en alguna de las variables. 
 
 ```{r}
 
@@ -124,7 +123,7 @@ Como los propios autores indican [1], estos valores faltantes pueden "imputarse"
 
 ### Pregunta 2
 
-Después es interesante conocer cuántas mujeres participaron en el estudio, así como la proporción de mujeres que fueron diagnosticadas finalmente con cáncer de cervix. 
+Después, es interesante conocer cuántas mujeres participaron en el estudio, así como la proporción de mujeres que fueron diagnosticadas finalmente con cáncer de cervix. 
 
 ```{r}
 
@@ -133,7 +132,7 @@ Después es interesante conocer cuántas mujeres participaron en el estudio, as�
 
 ### Pregunta 3
 
-A la hora de hacer un estudio en cancer, la edad es una variable que tiene una gran relevancia (la prevalencia de la mayoría de patologías de este tipo aumenta con la edad *ref*). Por ello sería útil conocer los valores mínimos y máximos de esta variable, o recodificarla en forma de factor definiendo rangos de edad. 
+A la hora de hacer un estudio en cancer, la edad es una variable que tiene una gran relevancia, ya que las prevalencias pueden variar mucho según la edad de los pacientes. En el caso concreto del cáncer de cérvix, la mayoría de casos se diagnostican entre los 35 y los 44 años [**4**]. Por ello, sería útil conocer los valores mínimos y máximos de esta variable, o recodificarla en forma de factor definiendo rangos de edad. 
 
 ```{r}
 
@@ -141,7 +140,7 @@ A la hora de hacer un estudio en cancer, la edad es una variable que tiene una g
 
 ### Pregunta 4
 
-También relacionada con la edad, un factor importante en el cáncer de cervix es el estado menopáusico de la paciente. Si establecemos la edad a partir de la cual suele aparecer la menopausia (*x* años *ref*) podemos definir una nueva columna "Menopause" que indique si la paciente es pre- o post-menopáusica.
+También relacionada con la edad, un factor importante en el cáncer de cervix es el estado menopáusico de la paciente. Si establecemos la edad a partir de la cual suele aparecer la menopausia (varía según la etnia, la establecemos en 49.7 años, que se corresponde con la edad media en Latino-América [**5**]) podemos definir una nueva columna "Menopause" que indique si la paciente es pre- o post-menopáusica.
 
 ```{r}
 
@@ -150,7 +149,7 @@ También relacionada con la edad, un factor importante en el cáncer de cervix e
 
 ### Pregunta 5
 
-Se ha reportado que el herpesvirus es una de las causas de cáncer de cervix en humanos. ¿En cuántas pacientes de las diagnosticadas con cáncer de cervix se detectó infección por este virus?
+Se ha reportado que el herpesvirus es una de las causas más frecuentes de cáncer de cervix en humanos [**6**]. ¿En cuántas pacientes de las diagnosticadas con cáncer de cervix se detectó infección por este virus?
 
 ```{r}
 
@@ -211,7 +210,6 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 <span style="color: SteelBlue;">A partir del conjunto de datos que estáis trabajando, plantead un estudio ANOVA y desarrollado si, a partir del estudio previo, se cumplen las condiciones.</span>
 
 
-
 ```{r}
 
 ```
@@ -249,8 +247,14 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 
 # Referencias
 
--  **[1]**: Fernandes, K., Cardoso, J.S., Fernandes, J. (2017) Transfer Learning with Partial Observability Applied to Cervical Cancer Screening. In: Alexandre L., Salvador Sánchez J., Rodrigues J. (eds) Pattern Recognition and Image Analysis. IbPRIA 2017. Lecture Notes in Computer Science, vol 10255. Springer, Cham. https://doi.org/10.1007/978-3-319-58838-4_27
+-  **[1]**: Fernandes, K., Cardoso, J.S., Fernandes, J. (2017) Transfer Learning with Partial Observability Applied to Cervical Cancer Screening. In: Alexandre L., Salvador Sánchez J., Rodrigues J. (eds) _Pattern Recognition and Image Analysis_. IbPRIA 2017. Lecture Notes in Computer Science, vol 10255. Springer, Cham. https://doi.org/10.1007/978-3-319-58838-4_27
 
-- **[2]**: Buskwofie, A., David-West, G., & Clare, C. A. (2020). A Review of Cervical Cancer: Incidence and Disparities. Journal of the National Medical Association, 112(2), 229–232. https://doi.org/10.1016/j.jnma.2020.03.002 
+- **[2]**: Buskwofie, A., David-West, G., & Clare, C. A. (2020). A Review of Cervical Cancer: Incidence and Disparities. _Journal of the National Medical Association_, 112(2), 229–232. https://doi.org/10.1016/j.jnma.2020.03.002 
 
-- **[3]**: Johnson, C. A., James, D., Marzan, A., & Armaos, M. (2019). Cervical Cancer: An Overview of Pathophysiology and Management. Seminars in oncology nursing, 35(2), 166–174. https://doi.org/10.1016/j.soncn.2019.02.003
+- **[3]**: Johnson, C. A., James, D., Marzan, A., & Armaos, M. (2019). Cervical Cancer: An Overview of Pathophysiology and Management. _Seminars in oncology nursing_, 35(2), 166–174. https://doi.org/10.1016/j.soncn.2019.02.003
+
+- **[4]**: Siegel, R. L., Miller, K. D., Fuchs, H. E., & Jemal, A. (2021). Cancer Statistics, 2021. _CA: a cancer journal for clinicians_, 71(1), 7–33. https://doi.org/10.3322/caac.21654
+
+- [**5**]: Castelo-Branco, C., Blümel, J. E., Chedraui, P., Calle, A., Bocanera, R., Depiano, E., Figueroa-Casas, P., Gonzalez, C., Martino, M., Royer, M., Zuñiga, C., Dulon, A., Espinoza, M. T., Futchner, C., Mostajo, D., Soto, E., Albernaz, M. A., Aravena, H., Busquets, M., Campodonico, I., … Figueroa-Casas, P. (2006). Age at menopause in Latin America. _Menopause_ (New York, N.Y.), 13(4), 706–712. https://doi.org/10.1097/01.gme.0000227338.73738.2d
+
+- [**6**]: Bedell, S. L., Goldstein, L. S., Goldstein, A. R., & Goldstein, A. T. (2020). Cervical Cancer Screening: Past, Present, and Future. _Sexual medicine reviews_, 8(1), 28–37. https://doi.org/10.1016/j.sxmr.2019.09.005
