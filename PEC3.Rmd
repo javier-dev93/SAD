@@ -81,17 +81,17 @@ Las tasas de éxito de estos tratamientos son variables, por lo que gran parte d
 
 ```{r}
 #Busqueda de conjunto de datos
-data<-read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/00383/risk_factors_cervical_cancer.csv",stringsAsFactors = FALSE,header=T,sep=",")
+cervical_cancer <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/00383/risk_factors_cervical_cancer.csv",stringsAsFactors = FALSE,header=T,sep=",")
 
 #names(data) <- c("birads","age","shape","margin","density","severity")
 ```
 
 ```{r}
-dim(data)
+dim(cervical_cancer)
 ```
 
 ```{r}
-str(data)
+str(cervical_cancer)
 ```
 
 ```{r}
@@ -111,6 +111,9 @@ str(data)
 En primer lugar, dado que los propios autores del dataset advierten que hubo pacientes que decidieron responder a algunas preguntas por cuestiones de privacidad, nos preguntamos ¿Cuántos valores faltantes (*missing values*) hay en el dataset? ¿Se concentran en alguna variable en concreto?
 
 ```{r}
+# Reemplazamos las interrogaciones por NA
+
+cervical_cancer[cervical_cancer == "?"] <- NA
 
 ```
 
@@ -196,6 +199,8 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 
 <span style="color: SteelBlue;">Realizad un breve análisis de regresión (lineal y múltiple) a partir de las variables que disponéis y utilizando el criterio que responda a alguna pregunta de interés que os hayáis planteado.</span>
 
+Como ya se ha comentado, el diagnóstico de enfermedades de transmisión sexual (como el HPV) pueden ser de gran relevancia en el cáncer de cervix. Nos planteamos si, utilizando el resto de variables del conjunto (correspondientes principalmente a información sobre hábitos de vida) podemos crear un modelo que prediga el número de ETS que puede sufrir la paciente.
+
 
 ```{r}
 
@@ -207,11 +212,17 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 
 ## Ejercicio 7
 
-<span style="color: SteelBlue;">A partir del conjunto de datos que estáis trabajando, plantead un estudio ANOVA y desarrollado si, a partir del estudio previo, se cumplen las condiciones.</span>
+<span style="color: SteelBlue;">A partir del conjunto de datos que estáis trabajando, plantead un estudio ANOVA y desarrolladlo si, a partir del estudio previo, se cumplen las condiciones.</span>
 
+Estudios previos han demostrado que existe una asociación entre la edad en la que ocurre la primera relación sexual y el riesgo de cáncer de cervix, posiblemente debido a una mayor probabilidad de infección temprana por HPV [**7**]. Procedemos a comprobar si se detecta esta asociación en el conjunto de datos de trabajo. 
 
 ```{r}
+cervical_cancer$Dx.Cancer <- factor(cervical_cancer$Dx.Cancer)
 
+cervical_cancer_anova <- aov(First.sexual.intercourse~Dx.Cancer,data=cervical_cancer, na.action=na.omit)
+
+# Mostramos el resumen estadístico del test
+summary(cervical_cancer_anova)
 ```
 
 ```{r}
@@ -220,7 +231,7 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 
 ## Ejercicio 8
 
-<span style="color: SteelBlue;">A partir de los datos de origen y el estudio realizado, haced una valoración fi-nal. Para ello, podéis basaros en las siguientes preguntas: "disponemos de con-clusiones finales?", "sería necesario hacer un análisis más avanzado?", "faltan datos para obtener otro tipo de información como...?",....</span>
+<span style="color: SteelBlue;">A partir de los datos de origen y el estudio realizado, haced una valoración final. Para ello, podéis basaros en las siguientes preguntas: "disponemos de conclusiones finales?", "sería necesario hacer un análisis más avanzado?", "faltan datos para obtener otro tipo de información como...?",....</span>
 
 
 ```{r}
@@ -258,3 +269,5 @@ Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cyt
 - [**5**]: Castelo-Branco, C., Blümel, J. E., Chedraui, P., Calle, A., Bocanera, R., Depiano, E., Figueroa-Casas, P., Gonzalez, C., Martino, M., Royer, M., Zuñiga, C., Dulon, A., Espinoza, M. T., Futchner, C., Mostajo, D., Soto, E., Albernaz, M. A., Aravena, H., Busquets, M., Campodonico, I., … Figueroa-Casas, P. (2006). Age at menopause in Latin America. _Menopause_ (New York, N.Y.), 13(4), 706–712. https://doi.org/10.1097/01.gme.0000227338.73738.2d
 
 - [**6**]: Bedell, S. L., Goldstein, L. S., Goldstein, A. R., & Goldstein, A. T. (2020). Cervical Cancer Screening: Past, Present, and Future. _Sexual medicine reviews_, 8(1), 28–37. https://doi.org/10.1016/j.sxmr.2019.09.005
+
+- [**7**]: Plummer, M., Peto, J., Franceschi, S., & International Collaboration of Epidemiological Studies of Cervical Cancer (2012). Time since first sexual intercourse and the risk of cervical cancer. _International journal of cancer_, 130(11), 2638–2644. https://doi.org/10.1002/ijc.26250
