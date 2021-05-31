@@ -112,15 +112,17 @@ En primer lugar, dado que los propios autores del dataset advierten que hubo pac
 
 ```{r}
 # Reemplazamos las interrogaciones por NA
-
 cervical_cancer[cervical_cancer == "?"] <- NA
 
-```
+# Utilizamos la función sapply para contar los valores TRUE (sum) de la función is.na (es decir, valores NA) sobre cada una de las columnas del dataset. Además utilizamos sort para ordenarlos de mayor a menor (indicado con decreasing=T)
+sort(sapply(cervical_cancer, function(x) sum(is.na(x))), decreasing = T)
 
-Como los propios autores indican [**1**], estos valores faltantes pueden "imputarse" usando la media muestral, ya que, aunque sería preferible tener los datos reales, es mejor que eliminar a una paciente del conjunto de datos sólo por tener valores faltantes en alguna de las variables. 
+```
+Como se puede observar, existe un número elevado de falores faltantes, especialmente en las variables `STDs..Time.since.first.diagnosis` y `STDs..Time.since.last.diagnosis`.
+Sin embargo, como los propios autores indican [**1**], estos valores faltantes pueden "imputarse" usando la media muestral, ya que, aunque sería preferible tener los datos reales, es mejor que eliminar a una paciente del conjunto de datos sólo por tener valores faltantes en alguna de las variables. 
 
 ```{r}
-
+# Definimos una función
 ```
 
 
@@ -129,7 +131,14 @@ Como los propios autores indican [**1**], estos valores faltantes pueden "imputa
 Después, es interesante conocer cuántas mujeres participaron en el estudio, así como la proporción de mujeres que fueron diagnosticadas finalmente con cáncer de cervix. 
 
 ```{r}
+# Para contar el número de mujeres que participaron en el estudio simplemente tenemos que ver el tamaño del dataset (o su longitud, length)
+length(cervical_cancer)
 
+# Para conocer el total de mujeres que fueron diagnosticadas finalmente con cáncer cervical sumamos solo aquellos valores que cumplen la condición Dx.cancer=1 (es decir, yes)
+sum(cervical_cancer$Dx.Cancer=="1")
+
+# Para calcular la proporción, dividimos el número de pacientes diagnosticadas con cancer y lo dividimos entre el total de pacientes, además de multiplicar por 100 para mostrarlo en porcentaje
+100*sum(cervical_cancer$Dx.Cancer=="1")/length(cervical_cancer)
 ```
 
 
@@ -146,7 +155,7 @@ A la hora de hacer un estudio en cancer, la edad es una variable que tiene una g
 También relacionada con la edad, un factor importante en el cáncer de cervix es el estado menopáusico de la paciente. Si establecemos la edad a partir de la cual suele aparecer la menopausia (varía según la etnia, la establecemos en 49.7 años, que se corresponde con la edad media en Latino-América [**5**]) podemos definir una nueva columna "Menopause" que indique si la paciente es pre- o post-menopáusica.
 
 ```{r}
-
+cervical_cancer$Menopause <- 
 ```
 
 
