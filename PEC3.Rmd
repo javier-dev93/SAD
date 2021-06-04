@@ -163,7 +163,7 @@ Las siguientes variables son booleanas sobre si se ha detectado o no cada una de
 
 ## Ejercicio 3
 
-<span style="color: SteelBlue;"> Realizad un mínimo de seis preguntas objetivo que den una idea de la información contenida en el conjunto de datos escogido, es decir, obtener infor-mación del conjunto de datos a partir de determinados criterios, según varia-bles, o rangos de valores, etc... Para ello, podéis basaros en el tipo de consultas realizadas en la PEC1 y también utilizando, en alguno de los casos, la definición de funciones tal como se trabaja en el LAB3.</span>
+<span style="color: SteelBlue;"> Realizad un mínimo de seis preguntas objetivo que den una idea de la información contenida en el conjunto de datos escogido, es decir, obtener información del conjunto de datos a partir de determinados criterios, según variables, o rangos de valores, etc... Para ello, podéis basaros en el tipo de consultas realizadas en la PEC1 y también utilizando, en alguno de los casos, la definición de funciones tal como se trabaja en el LAB3.</span>
 
 ### Pregunta 1
 
@@ -178,7 +178,17 @@ Como se puede observar, existe un número elevado de falores faltantes, especial
 Sin embargo, como los propios autores indican [**1**], estos valores faltantes pueden "imputarse" usando la media muestral, ya que, aunque sería preferible tener los datos reales, es mejor que eliminar a una paciente del conjunto de datos sólo por tener valores faltantes en alguna de las variables. 
 
 ```{r}
-# Definimos una función
+# Definimos una función que consiste en aplicarle a un conjunto (el argumento "datos") un for loop que itera sobre cada una de las columnas del conjunto. 
+# Para cada columna, se buscan los valores NA (usando como índice de fila is.na en esa columna y como índice de columna el nombre de la columna) y se sustituyen por la media de valores que hay en esa columna (mean, indicando que se eliminen los NA porque si no volveríamos a obtener un NA)
+imputar_medias <- function(datos){for (columna in (1:ncol(datos))){
+  datos[is.na(datos[,columna]), columna] <- mean(datos[,columna], na.rm = TRUE)
+}}
+
+# Aplicamos la función sobre nuestro conjunto 
+imputar_medias(cervical_cancer)
+
+# Comprobamos que hemos elminado los missing values 
+cervical_cancer[is.na(cervical_cancer)]
 ```
 
 
@@ -187,24 +197,34 @@ Sin embargo, como los propios autores indican [**1**], estos valores faltantes p
 Después, es interesante conocer cuántas mujeres participaron en el estudio, así como la proporción de mujeres que fueron diagnosticadas finalmente con cáncer de cervix. 
 
 ```{r}
-# Para contar el número de mujeres que participaron en el estudio simplemente tenemos que ver el tamaño del dataset (o su longitud, length)
-length(cervical_cancer)
+# Para contar el número de mujeres que participaron en el estudio simplemente tenemos que ver el tamaño del dataset (o su número de filas, nrow)
+nrow(cervical_cancer)
 
 # Para conocer el total de mujeres que fueron diagnosticadas finalmente con cáncer cervical sumamos solo aquellos valores que cumplen la condición Dx.cancer=1 (es decir, yes)
 sum(cervical_cancer$Dx.Cancer=="1")
 
 # Para calcular la proporción, dividimos el número de pacientes diagnosticadas con cancer y lo dividimos entre el total de pacientes, además de multiplicar por 100 para mostrarlo en porcentaje
-100*sum(cervical_cancer$Dx.Cancer=="1")/length(cervical_cancer)
+100*sum(cervical_cancer$Dx.Cancer=="1")/nrow(cervical_cancer)
 ```
 
+En este caso vemos que hay registros de 858 mujeres, de las cuales 18 fueron diagnosticadas con cáncer de cervix, es decir, un 2.10%.
 
 ### Pregunta 3
 
-A la hora de hacer un estudio en cancer, la edad es una variable que tiene una gran relevancia, ya que las prevalencias pueden variar mucho según la edad de los pacientes. En el caso concreto del cáncer de cérvix, la mayoría de casos se diagnostican entre los 35 y los 44 años [**4**]. Por ello, sería útil conocer los valores mínimos y máximos de esta variable, o recodificarla en forma de factor definiendo rangos de edad. 
+A la hora de hacer un estudio en cancer, la edad es una variable que tiene una gran relevancia, ya que las prevalencias pueden variar mucho según la edad de los pacientes. En el caso concreto del cáncer de cérvix, la mayoría de casos se diagnostican entre los 35 y los 44 años [**4**]. Por ello, sería útil conocer los valores mínimos y máximos de esta variable y ver las frecuencias según rangos de edad de, por ejemplo 10 años
 
 ```{r}
+# Obtenemos el máximo usando "max"
+max(cervical_cancer$Age)
 
+# Y el mínimo usando "min"
+min(cervical_cancer$Age)
+
+# Para evaluar la frecuencia por rangos de edad primero usamos la función cut que separa la variable Age según el argumento breaks, que definimos utilizando seq para obtener una secuencia de números entre 0 y 100 con un paso de 10. Finalmente utilizamos table para obtener la tabla de frecuencias.
+table(cut(cervical_cancer$Age, breaks=seq(0, 100, 10)))
 ```
+
+De este modo comprobamos que la paciente de mayor edad tuvo 84 años y la de menor 13. Además, vemos que la mayoría de nuestros datos se concentran entre los 10 y los 40 años.
 
 ### Pregunta 4
 
@@ -217,12 +237,17 @@ cervical_cancer$Menopause <-
 
 ### Pregunta 5
 
-Se ha reportado que el herpesvirus es una de las causas más frecuentes de cáncer de cervix en humanos [**6**]. ¿En cuántas pacientes de las diagnosticadas con cáncer de cervix se detectó infección por este virus?
+Se ha reportado que el herpesvirus es una de las causas más frecuentes de cáncer de cervix en humanos [**6**]. ¿En cuántas pacientes de las diagnosticadas con cáncer de cervix se detectó infección por este virus? ¿Qué proporción representa con respecto al total de mujeres diagnosticadas con cáncer de cervix?
 
 ```{r}
+# Creamos un "subset" a partir de nuestro conjunto de datos, seleccionando las filas que cumplen las dos (indicado con el símbolo &) condicones (Dx.cancer=1 y Dx.HPV=1). Después, para saber el total de pacientes que cumplen ambas condiciones solo necesitamos saber el número de filas del conjunto (nrow)
+nrow(cervical_cancer[(cervical_cancer$Dx.Cancer=="1" & cervical_cancer$Dx.HPV=="1"),])
 
+# Para calcular la proporción  dividimos el valor que acabamos de calcular entre el total de pacientes diagnosticadas con cáncer de cervix
+nrow(cervical_cancer[(cervical_cancer$Dx.Cancer=="1" & cervical_cancer$Dx.HPV=="1"),])*100 / nrow(cervical_cancer[(cervical_cancer$Dx.Cancer=="1"),])
 ```
 
+De este modo hemos comprobado que los datos concuerdan con lo reportado en la bibliografía, ya que 16 de las 18 pacientes diagnosticadas con cáncer cervical (un 88,89%) también fueron diagnosticadas con HPV.
 
 ### Pregunta 6
 
