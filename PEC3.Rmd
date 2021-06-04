@@ -79,28 +79,87 @@ Las tasas de éxito de estos tratamientos son variables, por lo que gran parte d
 
 <span style="color: SteelBlue;">Utilizando R, mostrad y explicad qué tipo de fichero habéis importado y las variables que forman parte de él (tipo, clasificación,...), así como todo aquello que creáis relevante. Incluir capturas de pantalla y las instrucciones en R que habéis utilizado para importar y  mostrar los datos.</span>
 
-```{r}
-#Busqueda de conjunto de datos
-cervical_cancer <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/00383/risk_factors_cervical_cancer.csv",stringsAsFactors = FALSE,header=T,sep=",")
+Como se ha comentado en el ejercicio previo, el conjunto de datos que hemos elegido se ha obtenido de un repositorio, por lo que podemos utilizar la url directamente para descargar los datos. De todos modos, descargamos los datos para que se puedan cargar desde el archivo csv como se muestra en la siguiente captura por si en algún momento no funcionara el enlace.
 
-#names(data) <- c("birads","age","shape","margin","density","severity")
+![Desgarga del conjunto de datos en formato csv](C:/Users/alba_/GDrive UOC (amachadolopez@uoc.edu)/Software_analisis/PEC3/SAD/images/ejercicio2.jpg "Desgarga del conjunto de datos en formato csv")
+
+```{r}
+# Descargamos el conjunto de datos utilizando la función read.csv y los argumentos header=T para indicar que la primera fila del archivo csv realmente corresponde a los nombres de las columnas (headers), stringsAsFactors=F para que no se conviertan los caracteres a facor y por último na.strings para indicar que lo que aparece como una interrogación realmente es un valor faltante (NA)
+cervical_cancer <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/00383/risk_factors_cervical_cancer.csv",header=T, stringsAsFactors = F, na.strings="?")
+
+# Si quisiéramos cargar el archivo csv descargado, utilizaríamos el mismo comando, pero sustituyendo la url del enlace por la ruta al archivo
 ```
 
+Lo primero que hacemos es mostrar los primeros y últimos registros para hacernos una idea general del conjunto de datos, usando las funciones `head` y `tail` respectivamente. 
+
+```{r}
+# Mostramos los primeros registros
+head(cervical_cancer)
+
+# Y los últimos
+tail(cervical_cancer)
+```
+
+Después, podemos ver las dimensiones del conjunto de datos usando la función `dim`
 ```{r}
 dim(cervical_cancer)
 ```
 
+Así, comprobamos que se trata de un conjunto de datos con dimensiones 858x36, es decir, con 858 filas o registros (en este caso datos de mujeres) y 36 columnas o variables.
+
+Para conocer mejor las características del conjunto de datos podemos evaluar qué tipo de objeto es y la estructura general del conjunto de datos (para ver tanto el nombre de las variables como su tipo). 
+
 ```{r}
+# También podemos comprobar qué tipo de objeto estamos utilizando
+class(cervical_cancer)
+
+# Y ver qué estructura tiene
 str(cervical_cancer)
 ```
 
-```{r}
+Así, nuestro objeto de trabajo es un data frame que contiene 36 variables. A priori, solo tenemos dos tipos de variables, `int`, es decir, números enteros y `num`, es decir, variables numéricas decimales. Realmente, muchas de estas variables solo pueden tomar dos valores (0 o 1) por lo que podríamos recodificarlas como factores. 
 
-```
+Una descripción un poco más detallada de las variables sería la siguiente:
 
-```{r}
+-   Age: Edad (int)
+-   Number.of.sexual.partners: Número de parejas sexuales (int)
+-   First.sexual.intercourse: Edad a la que se tuvo la primera relación sexual
+-   Num.of.pregnancies: Número de embarazos
+-   Smokes: Mujer fumadora (sí o no)
+-   Smokes..years.: Tiempo que la mujer es fumadora en años
+-   Smokes..packs.year.: Número de paquetes de tabaco al año
+-   Hormonal.Contraceptives: Uso de anticonceptivos hormonales (sí o no)
+-   Hormonal.Contraceptives..years.: Tiempo de uso de anticonceptivos hormonales en años
+-   IUD: Uso de dispositivo intrauterino o DIU (sí o no)
+-   IUD..years.: Tiempo de Uso de DIU en años
+-   STDs: Diagnóstico de enfermedades de transmisión sexual o ETS (sí o no)
+-   STDs..number.: Número de ETS
 
-```
+Las siguientes variables son booleanas sobre si se ha detectado o no cada una de las ETS en específico:
+  -   STDs.condylomatosis:
+  -   STDs:cervical condylomatosis:
+  -   STDs:vaginal condylomatosis
+  -   STDs:vulvo-perineal condylomatosis
+  -   STDs:syphilis
+  -   STDs:pelvic inflammatory disease
+  -   STDs:genital herpes
+  -   STDs:molluscum contagiosum
+  -   STDs:AIDS
+  -   STDs:HIV
+  -   STDs:Hepatitis B
+  -   STDs:HPV
+-   STDs: Number of diagnosis: Número de diagnósticos de ETS
+-   STDs: Time since first diagnosis: Tiempo desde el primer diagnóstico de ETS
+-   STDs: Time since last diagnosis: Tiempo desde el último diagnóstico de ETS
+-   Dx:Cancer: Diagnóstico de cáncer (sí o no)
+-   Dx:CIN: Diagnóstico de Neoplasia cervical intraepitelial (NCI, un cambio en las células uterinas que todavía no son malignas)
+-   Dx:HPV: Diagnóstico de virus del papiloma humano, HPV (sí o no)
+-   Dx: Paciente diagnosticada (sí o no)
+-   Hinselmann: Diagnóstico por colposcopía (sí o no). Esta prueba utiliza un colposcopio, que funciona a modo de lupa para observar la morfología de las células del cuello del útero. 
+-   Schiller: Diagnóstico por técnica de Schiller (sí o no). En esta prueba, durante la colposcopía se introduce una solución que tiñe las células del cérvix.
+-   Citology: Diagnóstico por citología (sí o no). En esta prueba se realiza un raspado de las células cervicales para examinarlas. 
+-   Biopsy:Diagnóstico por biopsia (sí o no). En esta prueba se toma un fragmento de tejido cervical para analizarlo utilizando técnicas de anatomía patológica. 
+
 
 ## Ejercicio 3
 
@@ -111,9 +170,6 @@ str(cervical_cancer)
 En primer lugar, dado que los propios autores del dataset advierten que hubo pacientes que decidieron responder a algunas preguntas por cuestiones de privacidad, nos preguntamos ¿Cuántos valores faltantes (*missing values*) hay en el dataset? ¿Se concentran en alguna variable en concreto?
 
 ```{r}
-# Reemplazamos las interrogaciones por NA
-cervical_cancer[cervical_cancer == "?"] <- NA
-
 # Utilizamos la función sapply para contar los valores TRUE (sum) de la función is.na (es decir, valores NA) sobre cada una de las columnas del dataset. Además utilizamos sort para ordenarlos de mayor a menor (indicado con decreasing=T)
 sort(sapply(cervical_cancer, function(x) sum(is.na(x))), decreasing = T)
 
