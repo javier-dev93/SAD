@@ -151,14 +151,29 @@ Las siguientes variables son booleanas sobre si se ha detectado o no cada una de
 -   STDs: Number of diagnosis: Número de diagnósticos de ETS
 -   STDs: Time since first diagnosis: Tiempo desde el primer diagnóstico de ETS
 -   STDs: Time since last diagnosis: Tiempo desde el último diagnóstico de ETS
--   Dx:Cancer: Diagnóstico de cáncer (sí o no)
--   Dx:CIN: Diagnóstico de Neoplasia cervical intraepitelial (NCI, un cambio en las células uterinas que todavía no son malignas)
--   Dx:HPV: Diagnóstico de virus del papiloma humano, HPV (sí o no)
+-   Dx.Cancer: Diagnóstico de cáncer (sí o no)
+-   Dx.CIN: Diagnóstico de Neoplasia cervical intraepitelial (NCI, un cambio en las células uterinas que todavía no son malignas)
+-   Dx.HPV: Diagnóstico de virus del papiloma humano, HPV (sí o no)
 -   Dx: Paciente diagnosticada (sí o no)
 -   Hinselmann: Diagnóstico por colposcopía (sí o no). Esta prueba utiliza un colposcopio, que funciona a modo de lupa para observar la morfología de las células del cuello del útero. 
 -   Schiller: Diagnóstico por técnica de Schiller (sí o no). En esta prueba, durante la colposcopía se introduce una solución que tiñe las células del cérvix.
 -   Citology: Diagnóstico por citología (sí o no). En esta prueba se realiza un raspado de las células cervicales para examinarlas. 
 -   Biopsy:Diagnóstico por biopsia (sí o no). En esta prueba se toma un fragmento de tejido cervical para analizarlo utilizando técnicas de anatomía patológica. 
+
+Procedemos a recodificar las variables como factores
+
+```{r}
+# Primero definimos un objeto con los nombres de las columnas que vamos a recodificar
+columnas_booleanas <- c("Smokes","Hormonal.Contraceptives","IUD","STDs","STDs.condylomatosis","STDs.cervical.condylomatosis","STDs.vaginal.condylomatosis","STDs.vulvo.perineal.condylomatosis","STDs.syphilis","STDs.pelvic.inflammatory.disease","STDs.genital.herpes", "STDs.molluscum.contagiosum", "STDs.AIDS","STDs.HIV","STDs.Hepatitis.B","STDs.HPV", "Dx.Cancer","Dx.CIN","Dx.HPV","Dx","Hinselmann","Schiller","Citology","Biopsy")
+
+# Creamos un for loop que itere sobre las columnas que hemos especificado, y las recodifique como factor, especificando los nuevos factores
+for (columna in columnas_booleanas){
+  cervical_cancer[,columna] <- factor(cervical_cancer[,columna], levels=c(0,1),labels=c("No","Yes"))
+}
+
+# Mostramos los primeros registros del dataframe recodificado
+head(cervical_cancer)
+```
 
 
 ## Ejercicio 3
@@ -179,18 +194,21 @@ Como se puede observar, existe un número elevado de falores faltantes, especial
 Sin embargo, como los propios autores indican [**1**], estos valores faltantes pueden "imputarse" usando la media muestral, ya que, aunque sería preferible tener los datos reales, es mejor que eliminar a una paciente del conjunto de datos sólo por tener valores faltantes en alguna de las variables. 
 
 ```{r}
+# Primero definimos un nuevo objeto que contenga las columnas en las que podemos imputar los valores usando la media, es decir, las variables int o numéricas. Obtenemos estas variables eliminando del total de variables (es decir, los names del dataframe) aquellos que se encuentran dentro del objeto del ejercicio 1, columnas booleanas
+columnas_numericas <- names(cervical_cancer)[!names(cervical_cancer) %in% columnas_booleanas]
+
 # Definimos una función que consiste en aplicarle a un conjunto (el argumento "datos") un for loop que itera sobre cada una de las columnas del conjunto. 
 # Para cada columna, se buscan los valores NA (usando como índice de fila is.na en esa columna y como índice de columna el nombre de la columna) y se sustituyen por la media de valores que hay en esa columna (mean, indicando que se eliminen los NA porque si no volveríamos a obtener un NA)
 imputar_medias <- function(datos){
-  for (columna in (1:ncol(datos)))
+  for (columna in columnas_numericas)
   {datos[is.na(datos[,columna]), columna] <- mean(datos[,columna], na.rm = TRUE)}
   return(datos)} # Añadimos la función return para disponer del conjunto de datos modificado en todo el environment ya que si no se limitaría a la función
 
 # Aplicamos la función sobre nuestro conjunto y la guardamos en un objeto con el mismo nombre para reemplazar el conjunto de datos original
 cervical_cancer <- imputar_medias(cervical_cancer)
 
-# Comprobamos que hemos elminado los missing values 
-cervical_cancer[is.na(cervical_cancer)]
+# Comprobamos que hemos elminado los missing values en la columna "STDs..Time.since.last.diagnosis" que era una de las variables numéricas que más NA tenía (no lo hacemos sobre el dataframe completo porque no hemos reemplazado los NAs en las variables categóricas)
+cervical_cancer$STDs..Time.since.last.diagnosis[is.na(cervical_cancer$STDs..Time.since.last.diagnosis)]
 ```
 
 
@@ -202,11 +220,11 @@ Después, es interesante conocer cuántas mujeres participaron en el estudio, as
 # Para contar el número de mujeres que participaron en el estudio simplemente tenemos que ver el tamaño del dataset (o su número de filas, nrow)
 nrow(cervical_cancer)
 
-# Para conocer el total de mujeres que fueron diagnosticadas finalmente con cáncer cervical sumamos solo aquellos valores que cumplen la condición Dx.cancer=1 (es decir, yes)
-sum(cervical_cancer$Dx.Cancer=="1")
+# Para conocer el total de mujeres que fueron diagnosticadas finalmente con cáncer cervical sumamos solo aquellos valores que cumplen la condición Dx.cancer=Yes
+sum(cervical_cancer$Dx.Cancer=="Yes")
 
 # Para calcular la proporción, dividimos el número de pacientes diagnosticadas con cancer y lo dividimos entre el total de pacientes, además de multiplicar por 100 para mostrarlo en porcentaje
-100*sum(cervical_cancer$Dx.Cancer=="1")/nrow(cervical_cancer)
+100*sum(cervical_cancer$Dx.Cancer=="Yes")/nrow(cervical_cancer)
 ```
 
 En este caso vemos que hay registros de 858 mujeres, de las cuales 18 fueron diagnosticadas con cáncer de cervix, es decir, un 2.10%.
@@ -244,10 +262,10 @@ Se ha reportado que el herpesvirus es una de las causas más frecuentes de cánc
 
 ```{r}
 # Creamos un "subset" a partir de nuestro conjunto de datos, seleccionando las filas que cumplen las dos (indicado con el símbolo &) condicones (Dx.cancer=1 y Dx.HPV=1). Después, para saber el total de pacientes que cumplen ambas condiciones solo necesitamos saber el número de filas del conjunto (nrow)
-nrow(cervical_cancer[(cervical_cancer$Dx.Cancer=="1" & cervical_cancer$Dx.HPV=="1"),])
+nrow(cervical_cancer[(cervical_cancer$Dx.Cancer=="Yes" & cervical_cancer$Dx.HPV=="Yes"),])
 
 # Para calcular la proporción  dividimos el valor que acabamos de calcular entre el total de pacientes diagnosticadas con cáncer de cervix
-nrow(cervical_cancer[(cervical_cancer$Dx.Cancer=="1" & cervical_cancer$Dx.HPV=="1"),])*100 / nrow(cervical_cancer[(cervical_cancer$Dx.Cancer=="1"),])
+nrow(cervical_cancer[(cervical_cancer$Dx.Cancer=="Yes" & cervical_cancer$Dx.HPV=="Yes"),])*100 / nrow(cervical_cancer[(cervical_cancer$Dx.Cancer=="Yes"),])
 ```
 
 De este modo hemos comprobado que los datos concuerdan con lo reportado en la bibliografía, ya que 16 de las 18 pacientes diagnosticadas con cáncer cervical (un 88,89%) también fueron diagnosticadas con HPV.
@@ -269,6 +287,7 @@ head(pruebas_positivas)
 
 <span style="color: SteelBlue;">Realizad un análisis descriptivo de los datos. Este estudio debe incluir, un resumen paramétrico de los datos y diversas representaciones gráficas de los mismos basadas en determinados criterios. Dejamos a vuestra elección el tipo de gráficos y los criterios utilizados.</span>
 
+En primer lugar, realizamos un resumen paramétrico de los datos usando la función `summary` 
 
 ```{r}
 
@@ -282,14 +301,14 @@ head(pruebas_positivas)
 
 <span style="color: SteelBlue;">Realizad, basándoos en los conceptos trabajados en el LAB4 y PEC2, un mínimo de tres enunciados que respondan a una cuestión de probabilidad y un mínimo de un enunciado que corresponda a un breve modelo de simulación. En este caso, si vuestro conjunto de datos no propicia estos enunciados, podéis generar una o diversas distribuciones en base a unos parámetros determinados definidos por vosotros.</span>
 
+~~algo relacionado con el tema de la incidencia/prevalencia?~~ 
+~~se puede simular una distribución a partir de nuestros datos?~~
+
 
 ```{r}
 
 ```
 
-```{r}
-
-```
 
 ## Ejercicio 6
 
@@ -316,9 +335,6 @@ Realizamos primero algunas comprobaciones previas:
 ```{r}
 # Creamos un nuevo dataframe que contenga solo las dos columnas que nos interesan (delante de la coma no ponemos nada porque queremos todas las filas)
 cervical_data_anova <- cervical_cancer[,c("STDs","First.sexual.intercourse")]
-
-# Recodificamos la variable smoke para que sea más explicativa
-cervical_data_anova$STDs <- factor(cervical_data_anova$STDs, levels=c(0,1),labels=c("No","Yes"))
 
 # Mostramos las primeras filas del nuevo dataframe
 head(cervical_data_anova)
@@ -397,15 +413,13 @@ El test anova indicaría que no hay diferencias significativas (p valor 0.05) en
 
 <span style="color: SteelBlue;">A partir de los datos de origen y el estudio realizado, haced una valoración final. Para ello, podéis basaros en las siguientes preguntas: "disponemos de conclusiones finales?", "sería necesario hacer un análisis más avanzado?", "faltan datos para obtener otro tipo de información como...?",....</span>
 
+En esta sección hemos trabajado con un conjunto de datos con un buen número de registros y bastantes variables a analizar. Sin embargo, hemos encontrado el problema de que al tratarse de información de pacientes que acudían al hospital, existe un gran sesgo hacia pacientes que finalmente no padecieron cáncer de cervix, lo que dificulta realizar el análisis estadístico  para extraer conclusiones concretas sobre esta enfermedad. De este modo, sería de gran utilidad e importancia aumentar el número de pacientes que sí fueron diagnosticadas con cáncer de cervix e intentar aproximarlo al número de pacientes sanas. Además, esto nos permitiría aproximar las distribuciones de las variables a una distribución normal gracias al teorema central del límite (TCL).
 
-```{r}
+Otro punto a mejorar del conjunto de datos sería especificar la información proporcionada sobre las técnicas de diagnóstico. Sabemos si las pruebas se realizaron o no, pero no tenemos datos sobre el resultado de la prueba en concreto. Por ejemplo, si hubiéramos tenido información histopatológica de la biopsia (número de mitosis por campo, porcentaje de necrosis...) podríamos haber incorporado estas variables al análisis de regresión o haberlas utilizado para el ANOVA, buscando valores límite que nos permitieran mejorar el diagnóstico o predecir el estado de una paciente y su prognosis.
 
-```
+Además, y dada la relevancia de otras disciplinas de la bioinformática en el estudio del cáncer, sería interesante incorporar a este conjunto de datos otras variables que proporcionaran información sobre las características a nivel genómico, transcriptómico o proteómico de las pacientes analizadas, como una fuente añadida de información que permita encontrar herramientas para el diagnóstico temprano del cácner cervical. 
 
-```{r}
-
-```
-
+~~acabar~~
 
 # Sección 2. Análisis cluster con R
 
