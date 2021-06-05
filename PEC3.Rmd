@@ -310,20 +310,88 @@ Como ya se ha comentado, el diagnóstico de enfermedades de transmisión sexual 
 
 <span style="color: SteelBlue;">A partir del conjunto de datos que estáis trabajando, plantead un estudio ANOVA y desarrolladlo si, a partir del estudio previo, se cumplen las condiciones.</span>
 
-Estudios previos han demostrado que existe una asociación entre la edad en la que ocurre la primera relación sexual y el riesgo de cáncer de cervix, posiblemente debido a una mayor probabilidad de infección temprana por HPV [**7**]. Procedemos a comprobar si se detecta esta asociación en el conjunto de datos de trabajo. 
+Estudios previos han demostrado que existe una asociación entre la edad en la que ocurre la primera relación sexual y el riesgo de cáncer de cervix, posiblemente debido a una mayor probabilidad de infección temprana por HPV u otras ETS [**7**]. Procedemos a comprobar si existe una relación entre la edad a la que ocurre la primera relación sexual y la detección o no de ETS en nuestro conjunto de datos de trabajo. 
+
+Realizamos primero algunas comprobaciones previas:
+```{r}
+# Creamos un nuevo dataframe que contenga solo las dos columnas que nos interesan (delante de la coma no ponemos nada porque queremos todas las filas)
+cervical_data_anova <- cervical_cancer[,c("STDs","First.sexual.intercourse")]
+
+# Recodificamos la variable smoke para que sea más explicativa
+cervical_data_anova$STDs <- factor(cervical_data_anova$STDs, levels=c(0,1),labels=c("No","Yes"))
+
+# Mostramos las primeras filas del nuevo dataframe
+head(cervical_data_anova)
+```
 
 ```{r}
-cervical_cancer$Dx.Cancer <- factor(cervical_cancer$Dx.Cancer)
+# Comprobamos cuántas observaciones tenemos para cada uno de los grupos
+table(cervical_data_anova$STDs)
 
-cervical_cancer_anova <- aov(First.sexual.intercourse~Dx.Cancer,data=cervical_cancer, na.action=na.omit)
+# También podemos ver la proporción usando prop.table sobre la tabla creada
+prop.table(table(cervical_data_anova$STDs))
+```
+
+Como vemos en la tabla, existe un sesgo importante ya que de todas las pacientes disponibles, solo un 10% fueron diagnosticadas con alguna ETS, por lo que deberemos interpretar los resultados con cautela. 
+
+```{r}
+# Calculamos media y desviación estándar por cada grupo usando aggregate, que divide el conjunto de datos según un criterio especifico y le aplica la función (mean para la media y sd para la desviación estándar)
+aggregate(First.sexual.intercourse~STDs,data=cervical_data_anova,FUN=mean)
+
+aggregate(First.sexual.intercourse~STDs,data=cervical_data_anova,FUN=sd)
+```
+
+Podemos ver que parece haber una diferencia bastante pequeña entre la edad del primer encuentro sexual entre las pacientes que sí fueron diagnosticadas con cáncer y las que no, que es mayor en el primer grupo. Podemos realizar una representación gráfica para vez la distribución de los datos:
+
+```{r}
+# Usamos boxplot para crear un diagrama de cajas, cambiando las etiquetas de los ejes x e y y cambiando el color de la gráfica
+boxplot(First.sexual.intercourse~STDs,data=cervical_data_anova, ylab="Edad en la primera relación sexual", xlab="Diagnóstico de ETS", col="darkturquoise")
+```
+Como ya podíamos ver en la comparación de medias, la diferencia entre ambos grupos parece muy sutil, aunque podemos continuar con el análisis para evaluar si esta diferencia puede ser considerada significativa. Antes de hacer el ANOVA debemos comprobar que las variables siguen una distribución normal y que tienen varianzas iguales (homocedasticidad).
+
+-   Para la normalidad:
+
+```{r}
+# Primero hacemos una representación gráfica
+par(mfrow=c(1,2)) # Establecemos un espacio con una fila y dos columnas para hacer las gráficas de peso para cada uno de los grupos
+
+# Primero filtramos el dataset para quedarnos solo con las pacientes diagnosticadas con ETS y representamos el gráfico de cuartiles (qqnorm) y la recta
+qqnorm(cervical_data_anova[cervical_data_anova$STDs=="Yes","First.sexual.intercourse"],main="Pacientes con ETS") 
+qqline(cervical_data_anova[cervical_data_anova$STDs=="Yes","First.sexual.intercourse"])
+
+# Hacemos lo mismo con las pacientes no diagnosticadas con ETS
+qqnorm(cervical_data_anova[cervical_data_anova$STDs=="No","First.sexual.intercourse"],main="Pacientes sin ETS") 
+qqline(cervical_data_anova[cervical_data_anova$STDs=="No","First.sexual.intercourse"]) 
+```
+
+Comprobamos la ormalidad con un test de Kolmogorov-Smirnov ya que tenemos más de 50 muestras por cada grupo. 
+
+```{r}
+# Cargamos la librería
+library(nortest)
+
+# Para aplicar el test de Kolmogorov-Smirnov (también llamado test de Lilliefors) utilizamos la función lillie.test, y la aplicamos a todo el conjunto de datos pero separando por grupo (cosa que hacemos utilizando la función by e indicando que la separación de grupos viene determinada por la variable smoke)
+by(data=cervical_data_anova,INDICES = cervical_data_anova$STDs,FUN=function(x){lillie.test(cervical_data_anova$First.sexual.intercourse)})
+```
+Tanto en las gráficas, donde los residuos se alejan bastante de la recta de los cuartiles teóricos de una ditribución normal tanto como en el test de normalidad de Liliefors (p valor<0.01 rechazamos la hipótesis nula de que las variables tienen una distribución normal) podemos comprobar que nuestras variables no siguen una distribución normal. En base a estos resultados **no deberíamos continuar con el ANOVA** aunque continuamos a modo ilustrativo, conocedores de que los resultados que se desprendan del análisis no son confiables ya que no se cumplen las premisas necesarias. 
+
+Si las variables siguieran una distribución normal, también sería necesario comprobar la homocedasticidad, es decir, si la varianza es constante entre los grupos utilizando el test de Fligner-Killen.
+
+```{r}
+fligner.test(First.sexual.intercourse~STDs,data=cervical_data_anova)
+```
+En este caso obtenemos un p-valor superior a 0.05 por lo que aceptamos la hipótesis de que las varianzas son constantes entre los dos grupos.
+
+Una vez hechas las comprobaciones de normalidad y homocedasticidad podemos hacer el ANOVA:
+```{r}
+# Utilizamos la función aov para crear un modelo de análisis de varianza, que guardamos en un nuevo objeto. Especificamos las dos variables de comparación y el conjunto de datos del que proceden, además de indicar que se omitan los valores faltantes
+cervical_anova <- aov(First.sexual.intercourse~STDs,data=cervical_data_anova, na.action=na.omit)
 
 # Mostramos el resumen estadístico del test
-summary(cervical_cancer_anova)
+summary(cervical_anova)
 ```
 
-```{r}
-
-```
+El test anova indicaría que no hay diferencias significativas (p valor 0.05) en la edad del primer encuentro sexual y las pacientes diagnosticadas o no con ETS. Sin embargo, como ya se ha comprobado a lo largo del ejercicio, no se trata de un análisis fiable ya que no se cumple el requisito de normalidad de variables para hacer el ANOVA, hay un sesgo importante en el número de pacientes que hay en cada grupo (muchas más pacientes no tienen diagnosticada ninguna ETS) y se trata de un conjunto de datos con un alto número de valores faltantes. 
 
 ## Ejercicio 8
 
