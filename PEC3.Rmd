@@ -287,15 +287,32 @@ head(pruebas_positivas)
 
 <span style="color: SteelBlue;">Realizad un análisis descriptivo de los datos. Este estudio debe incluir, un resumen paramétrico de los datos y diversas representaciones gráficas de los mismos basadas en determinados criterios. Dejamos a vuestra elección el tipo de gráficos y los criterios utilizados.</span>
 
-En primer lugar, realizamos un resumen paramétrico de los datos usando la función `summary` 
+En primer lugar, realizamos un resumen paramétrico de los datos usando la función `summary`:
 
 ```{r}
-
+summary(cervical_cancer)
 ```
+
+Esta función nos permite obtener, para cada variable numérica del conjunto, el mínimo, máximo, primer y tercer cuartil, media, mediana y número de NAs. Para las variables categóricas (que hemos recodificado anteriormente como factor) nos muestra el número de veces que aparece cada posible valor. Podríamos haber utilizado distintas funciones para calcular cada uno de estos valores por separado (`max`,`min`,`mean`,`median`...), pero gracias a `summary` obtenemos todos estos valores utilizando una sola función.
+
+Para conocer con más detenimiento algunas de las variables del conjunto de datos podemos realizar una serie de representaciones gráficas.
+
+En primer lugar, y dada la importancia de la edad en este tipo de estudios que ya hemos comentado, podemos realizar un histograma de esta variable, añadiéndole la línea de densidad 
+para ver cómo se distribuye.
 
 ```{r}
-
+hist(cervical_cancer$Age, breaks=20, col="aquamarine1", xlab="Individuos 0+", ylab="Frecuencia",main="Histograma de edad",xlim=c(0,85),freq=F) # Cambiamos el número de intervalos y coloreamos el histograma de rosa claro, además de añadir títulos a los ejes y al gráfico completo y cambiar los límites del eje x para que aparezca entero
+lines(density(cervical_cancer$Age),col="aquamarine4",lwd=3)
 ```
+
+
+Barplot agrupado variables categóricas
+
+
+boxplot
+
+
+dotplot
 
 ## Ejercicio 5
 
@@ -415,7 +432,7 @@ El test anova indicaría que no hay diferencias significativas (p valor 0.05) en
 
 En esta sección hemos trabajado con un conjunto de datos con un buen número de registros y bastantes variables a analizar. Sin embargo, hemos encontrado el problema de que al tratarse de información de pacientes que acudían al hospital, existe un gran sesgo hacia pacientes que finalmente no padecieron cáncer de cervix, lo que dificulta realizar el análisis estadístico  para extraer conclusiones concretas sobre esta enfermedad. De este modo, sería de gran utilidad e importancia aumentar el número de pacientes que sí fueron diagnosticadas con cáncer de cervix e intentar aproximarlo al número de pacientes sanas. Además, esto nos permitiría aproximar las distribuciones de las variables a una distribución normal gracias al teorema central del límite (TCL).
 
-Otro punto a mejorar del conjunto de datos sería especificar la información proporcionada sobre las técnicas de diagnóstico. Sabemos si las pruebas se realizaron o no, pero no tenemos datos sobre el resultado de la prueba en concreto. Por ejemplo, si hubiéramos tenido información histopatológica de la biopsia (número de mitosis por campo, porcentaje de necrosis...) podríamos haber incorporado estas variables al análisis de regresión o haberlas utilizado para el ANOVA, buscando valores límite que nos permitieran mejorar el diagnóstico o predecir el estado de una paciente y su prognosis.
+También hemos de tener en cuenta que existe un elevado número de _missing values_ debido a cuestiones de privacidad, sobre todo en lo que respecta a las enfermedades de transmisión sexual, lo que ha hecho que perdamos información o haya sido necesario imputar valores en algunos casos, posiblemente alterando el resultado final del análisis. Otro punto a mejorar del conjunto de datos sería especificar la información proporcionada sobre las técnicas de diagnóstico. Sabemos si las pruebas se realizaron o no, pero no tenemos datos sobre el resultado de la prueba en concreto. Por ejemplo, si hubiéramos tenido información histopatológica de la biopsia (número de mitosis por campo, porcentaje de necrosis...) podríamos haber incorporado estas variables al análisis de regresión o haberlas utilizado para el ANOVA, buscando valores límite que nos permitieran mejorar el diagnóstico o predecir el estado de una paciente y su prognosis.
 
 Además, y dada la relevancia de otras disciplinas de la bioinformática en el estudio del cáncer, sería interesante incorporar a este conjunto de datos otras variables que proporcionaran información sobre las características a nivel genómico, transcriptómico o proteómico de las pacientes analizadas, como una fuente añadida de información que permita encontrar herramientas para el diagnóstico temprano del cácner cervical. 
 
