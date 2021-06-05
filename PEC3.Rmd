@@ -272,11 +272,15 @@ De este modo hemos comprobado que los datos concuerdan con lo reportado en la bi
 
 ### Pregunta 6
 
-Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cytology y Biopsy) indican pruebas diagnósticas utilizadas frecuentemente en cáncer. Separando por pacientes diagnosticadas con cáncer, se podría un nuevo dataset con el número total de pruebas (entre 0 y 4).
+Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cytology y Biopsy) indican pruebas diagnósticas utilizadas frecuentemente en cáncer. Separando por pacientes diagnosticadas con cáncer, se podría crear un nuevo dataset solo con estas variables y añadiendo el número total de pruebas (entre 0 y 4).
 
 ```{r}
-# Para crear un nuevo data.frame, especificamos las dos columnas que queremos que lo compongan. La primera, llamada diagnosis es sencillamente una copia de la columna Dx.Cancer del dataframe original. La segunda, llamada number_of_tests la obtenemos al sumar directamente las 4 columnas de diagnóstico, ya que el valor 1 se corresponde con que se ha realizado la prueba
-pruebas_positivas <- data.frame("Diagnosis"=cervical_cancer$Dx.Cancer, "number_of_tests"=(cervical_cancer$Hinselmann+ cervical_cancer$Schiller+cervical_cancer$Citology+cervical_cancer$Biopsy))
+# Para crear un nuevo data.frame, especificamos las columnas que queremos que lo compongan, extrayéndolas directamente del dataframe original, especificando los nombres que queremos que tengan
+
+pruebas_positivas <- data.frame("Diagnosis"=cervical_cancer$Dx.Cancer,"Hinselman"=cervical_cancer$Hinselmann,"Schiller"=cervical_cancer$Schiller,"Cytology"= cervical_cancer$Citology, "Biopsy"=cervical_cancer$Biopsy)
+
+# La última columna, number_of_tests, la calculamos utilizando la función "rowSums" en las columnas 2 a 5 (excluimos la de diagnóstico final) cuando existe un valor "Yes"
+pruebas_positivas$number_of_tests <- rowSums(pruebas_positivas[,2:5]=="Yes")
 
 # Mostramos los primeros registros del dataframe que acabamos de crear:
 head(pruebas_positivas)
@@ -293,26 +297,42 @@ En primer lugar, realizamos un resumen paramétrico de los datos usando la funci
 summary(cervical_cancer)
 ```
 
-Esta función nos permite obtener, para cada variable numérica del conjunto, el mínimo, máximo, primer y tercer cuartil, media, mediana y número de NAs. Para las variables categóricas (que hemos recodificado anteriormente como factor) nos muestra el número de veces que aparece cada posible valor. Podríamos haber utilizado distintas funciones para calcular cada uno de estos valores por separado (`max`,`min`,`mean`,`median`...), pero gracias a `summary` obtenemos todos estos valores utilizando una sola función.
-
-Para conocer con más detenimiento algunas de las variables del conjunto de datos podemos realizar una serie de representaciones gráficas.
-
-En primer lugar, y dada la importancia de la edad en este tipo de estudios que ya hemos comentado, podemos realizar un histograma de esta variable, añadiéndole la línea de densidad 
-para ver cómo se distribuye.
+Esta función nos permite obtener, para cada variable numérica del conjunto, el mínimo, máximo, primer y tercer cuartil, media, mediana y número de NAs. Para las variables categóricas (que hemos recodificado anteriormente como factor) nos muestra el número de veces que aparece cada posible valor. Podríamos haber utilizado distintas funciones para calcular cada uno de estos valores por separado (`max`,`min`,`mean`,`median`...), pero gracias a `summary` obtenemos todos estos valores utilizando una sola función. Uno de los pocos parámetros que no nos proporciona esta función es la desviación estándar y la varianza, que calculamos usando `sd` y `var`, respectivamente. 
 
 ```{r}
-hist(cervical_cancer$Age, breaks=20, col="aquamarine1", xlab="Individuos 0+", ylab="Frecuencia",main="Histograma de edad",xlim=c(0,85),freq=F) # Cambiamos el número de intervalos y coloreamos el histograma de rosa claro, además de añadir títulos a los ejes y al gráfico completo y cambiar los límites del eje x para que aparezca entero
-lines(density(cervical_cancer$Age),col="aquamarine4",lwd=3)
+# Utilizamos el mismo objeto que hemos creado en el ejercicio anterior que contiene los nombres de las columnas de tipo numérico o integer para aplicar (usando apply y con el argumento 2 para hacerlo a todas las columnas directamente) las funciones sd y var 
+
+apply(cervical_cancer[columnas_numericas], 2, sd)
+
+apply(cervical_cancer[columnas_numericas], 2, var)
 ```
 
 
-Barplot agrupado variables categóricas
+Además de este resumen paramétrico, para conocer con más detenimiento algunas de las variables del conjunto de datos podemos realizar diversas representaciones gráficas.
+
+En primer lugar, y dada la importancia de la edad en este tipo de estudios que ya hemos comentado, podemos realizar un histograma de esta variable, añadiéndole la línea de densidadpara ver cómo se distribuye.
+
+```{r}
+hist(cervical_cancer$Age, breaks=20, col="aquamarine1", xlab="Edad de las pacientes", ylab="Frecuencia",main="Histograma de edad",xlim=c(0,85),freq=F) # Cambiamos el número de intervalos y coloreamos el histograma de azul, además de añadir títulos a los ejes y al gráfico completo y cambiar los límites del eje x para que aparezca entero
+lines(density(cervical_cancer$Age),col="aquamarine4",lwd=3)
+```
+
+En esta gráfica vemos que la distribución no es exactamente una distribución normal, si no que parece más sesgada hacia la izquierda, es decir, hay más pacientes de menores edades.
+
+Para evaluar de un vistazo los datos de las variables categóricas podemos representarlas todas a la vez utilizando un barplot agrupado:
+
+```{r}
+variables_categoricas <- cervical_cancer[,columnas_booleanas]
+
+variables_categoricas2 <- apply(variables_categoricas,2,table)
+```
 
 
 boxplot
 
-
 dotplot
+
+
 
 ## Ejercicio 5
 
