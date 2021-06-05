@@ -174,18 +174,20 @@ En primer lugar, dado que los propios autores del dataset advierten que hubo pac
 sort(sapply(cervical_cancer, function(x) sum(is.na(x))), decreasing = T)
 
 ```
+
 Como se puede observar, existe un número elevado de falores faltantes, especialmente en las variables `STDs..Time.since.first.diagnosis` y `STDs..Time.since.last.diagnosis`.
 Sin embargo, como los propios autores indican [**1**], estos valores faltantes pueden "imputarse" usando la media muestral, ya que, aunque sería preferible tener los datos reales, es mejor que eliminar a una paciente del conjunto de datos sólo por tener valores faltantes en alguna de las variables. 
 
 ```{r}
 # Definimos una función que consiste en aplicarle a un conjunto (el argumento "datos") un for loop que itera sobre cada una de las columnas del conjunto. 
 # Para cada columna, se buscan los valores NA (usando como índice de fila is.na en esa columna y como índice de columna el nombre de la columna) y se sustituyen por la media de valores que hay en esa columna (mean, indicando que se eliminen los NA porque si no volveríamos a obtener un NA)
-imputar_medias <- function(datos){for (columna in (1:ncol(datos))){
-  datos[is.na(datos[,columna]), columna] <- mean(datos[,columna], na.rm = TRUE)
-}}
+imputar_medias <- function(datos){
+  for (columna in (1:ncol(datos)))
+  {datos[is.na(datos[,columna]), columna] <- mean(datos[,columna], na.rm = TRUE)}
+  return(datos)} # Añadimos la función return para disponer del conjunto de datos modificado en todo el environment ya que si no se limitaría a la función
 
-# Aplicamos la función sobre nuestro conjunto 
-imputar_medias(cervical_cancer)
+# Aplicamos la función sobre nuestro conjunto y la guardamos en un objeto con el mismo nombre para reemplazar el conjunto de datos original
+cervical_cancer <- imputar_medias(cervical_cancer)
 
 # Comprobamos que hemos elminado los missing values 
 cervical_cancer[is.na(cervical_cancer)]
@@ -231,7 +233,8 @@ De este modo comprobamos que la paciente de mayor edad tuvo 84 años y la de men
 También relacionada con la edad, un factor importante en el cáncer de cervix es el estado menopáusico de la paciente. Si establecemos la edad a partir de la cual suele aparecer la menopausia (varía según la etnia, la establecemos en 49.7 años, que se corresponde con la edad media en Latino-América [**5**]) podemos definir una nueva columna "Menopause" que indique si la paciente es pre- o post-menopáusica.
 
 ```{r}
-cervical_cancer$Menopause <- 
+# Creamos la variable directamente (indicada con $). Utilizamos la función ifelse, en la que establecemos una condición (en este caso que la edad sea superior a 49.7) y las dos alternativas ("yes" si la condición se cumple y "no" si no se cumple)
+cervical_cancer$Menopause <- ifelse(cervical_cancer$Age >=49.7, "Yes", "No")
 ```
 
 
@@ -251,12 +254,15 @@ De este modo hemos comprobado que los datos concuerdan con lo reportado en la bi
 
 ### Pregunta 6
 
-Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cytology y Biopsy) indican pruebas diagnósticas utilizadas frecuentemente en cáncer. Separando por pacientes diagnosticadas con cáncer, se podría un nuevo dataset con el número total de pruebas positivas (entre 0 y 4).
+Finalmente, las cuatro últimas variables del dataset (Hinselmann, Schiller, Cytology y Biopsy) indican pruebas diagnósticas utilizadas frecuentemente en cáncer. Separando por pacientes diagnosticadas con cáncer, se podría un nuevo dataset con el número total de pruebas (entre 0 y 4).
 
 ```{r}
+# Para crear un nuevo data.frame, especificamos las dos columnas que queremos que lo compongan. La primera, llamada diagnosis es sencillamente una copia de la columna Dx.Cancer del dataframe original. La segunda, llamada number_of_tests la obtenemos al sumar directamente las 4 columnas de diagnóstico, ya que el valor 1 se corresponde con que se ha realizado la prueba
+pruebas_positivas <- data.frame("Diagnosis"=cervical_cancer$Dx.Cancer, "number_of_tests"=(cervical_cancer$Hinselmann+ cervical_cancer$Schiller+cervical_cancer$Citology+cervical_cancer$Biopsy))
 
+# Mostramos los primeros registros del dataframe que acabamos de crear:
+head(pruebas_positivas)
 ```
-
 
 
 ## Ejercicio 4
