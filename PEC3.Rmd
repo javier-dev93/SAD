@@ -327,15 +327,39 @@ En esta gráfica vemos que la distribución no es exactamente una distribución 
 Para evaluar de un vistazo los datos de las pruebas diagnósticas así como el diagnóstico final, podemos representarlas todas estas variables a la vez utilizando un barplot agrupado:
 
 
-
 ```{r}
+# Primero creamos un nuevo data frame al unir (cbind, por las columnas) las tablas de frecuencias que obtenemos para cada una de las variables de interés (table)
 datos_Dx <- data.frame(cbind(table(cervical_cancer$Dx.Cancer),table(cervical_cancer$Dx.CIN),table(cervical_cancer$Dx.HPV),table(cervical_cancer$Hinselmann),table(cervical_cancer$Schiller),table(cervical_cancer$Citology),table(cervical_cancer$Biopsy)))
 
+# Corregimos el nombre de las columnas del nuevo dataframe
 colnames(datos_Dx) <- c("Dx.Cancer","Dx.CIN","Dx.HPV","Hinselmann","Schiller","Citology","Biopsy")
 
-datos_Dx2 <- reshapeLong(datos_Dx)
+# Para hacer este tipo de gráfico, necesitamos que los datos estén en formato "long" (cada fila se corresponde a una observación de un conjunto de categorías) en lugar de en formato "wide" que es como los tenemos. Para ello usamos la función reshape (por continuar en R base y no necesitar paquetes adicionales) e indicamos el conjunto de datos a transformar, las variables que queremos que sean las categorías en el formato long y que combinamos en una nueva variable (Varing y times respectivamente), el nombre de la variable que se traslada desde el formato wide (count), la variable que diferencia las distintas observaciones (timevar), los identificadores de cada categoría (ids) y el formato al que queremos transformar (direction)
+datos_Dx_long <- reshape(datos_Dx, 
+  varying = c("Dx.Cancer","Dx.CIN","Dx.HPV","Hinselmann","Schiller","Citology","Biopsy"), 
+  v.names = "count",
+  timevar = "Diagnosis", 
+  times = c("Dx.Cancer","Dx.CIN","Dx.HPV","Hinselmann","Schiller","Citology","Biopsy"),ids=c("No","Yes"),
+  direction = "long")
+
+# Mostramos los primeros registros del nuevo dataframe
+head(datos_Dx_long)
 ```
 
+
+```{r}
+# Utilizamos ggplot para representar las variables. En este caso, en el eje y colocamos la variable Diagnosis, es decir, separando por tipo de prueba o diagnóstico. En el eje y representamos la variable "count" y con fill se representa la variable id, es decir, el número de veces que cada uno de los valores de la variable id (yes o no) aparece asociado a las categorías de Diagnosis
+ggplot(datos_Dx_long, aes(fill=id, y=count, x=Diagnosis)) + 
+    geom_bar(position="dodge", stat="identity") + # Utilizamos geom_bar para hacer el gráfico de barras, indicando que la posición sea "dodge" es decir, que las barras de cada categoría se muestren adyacentes en vez de apiladas o separadas.
+  scale_fill_manual(values=c("darkseagreen","coral1")) +# Cambiamos los colores usando scale_fill_manual
+  ylab("Count") + ggtitle("Proportion of yes/no for test/diagnosis")+ theme(legend.title = element_blank()) # Eliminamos el título de la leyenda porque no es informativo (reemplazamos el título (legend.title) por un elemento vacío (element_blank))
+
+
+# Otra representación similar y también interesante sería utilizando el argumento position="fill" en el que se representan los valores en forma de proporción, para poder comparar entre variables
+ggplot(datos_Dx_long, aes(fill=id, y=count, x=Diagnosis)) + 
+    geom_bar(position="fill", stat="identity") + scale_fill_manual(values=c("darkseagreen","coral1")) + ylab("Frequency") + ggtitle("Proportion of yes/no for test/diagnosis") + theme(legend.title = element_blank()) 
+```
+De nuevo, en ambas representaciones podemos comprobar que tenemos un sesgo importante hacia el valor "no" en todas las variables de pruebas o diagnóstico, lo cual es importante tener en cuenta a la hora de interpretar los resultados. 
 
 Dada la importancia del consumo de tabaco en el desarrollo de muchos tipos de cáncer, también estamos interesados en la distribución de los dos grupos según la edad de las pacientes. 
 
