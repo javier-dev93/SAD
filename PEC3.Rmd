@@ -308,7 +308,12 @@ apply(cervical_cancer[columnas_numericas], 2, var)
 ```
 
 
-Además de este resumen paramétrico, para conocer con más detenimiento algunas de las variables del conjunto de datos podemos realizar diversas representaciones gráficas.
+Además de este resumen paramétrico, para conocer con más detenimiento algunas de las variables del conjunto de datos podemos realizar diversas representaciones gráficas, para lo que utilizaremos R base y el paquete `ggplot2`.
+
+```{r}
+library(ggplot2)
+```
+
 
 En primer lugar, y dada la importancia de la edad en este tipo de estudios que ya hemos comentado, podemos realizar un histograma de esta variable, añadiéndole la línea de densidadpara ver cómo se distribuye.
 
@@ -319,19 +324,38 @@ lines(density(cervical_cancer$Age),col="aquamarine4",lwd=3)
 
 En esta gráfica vemos que la distribución no es exactamente una distribución normal, si no que parece más sesgada hacia la izquierda, es decir, hay más pacientes de menores edades.
 
-Para evaluar de un vistazo los datos de las variables categóricas podemos representarlas todas a la vez utilizando un barplot agrupado:
+Para evaluar de un vistazo los datos de las pruebas diagnósticas así como el diagnóstico final, podemos representarlas todas estas variables a la vez utilizando un barplot agrupado:
+
+
 
 ```{r}
-variables_categoricas <- cervical_cancer[,columnas_booleanas]
+datos_Dx <- data.frame(cbind(table(cervical_cancer$Dx.Cancer),table(cervical_cancer$Dx.CIN),table(cervical_cancer$Dx.HPV),table(cervical_cancer$Hinselmann),table(cervical_cancer$Schiller),table(cervical_cancer$Citology),table(cervical_cancer$Biopsy)))
 
-variables_categoricas2 <- apply(variables_categoricas,2,table)
+colnames(datos_Dx) <- c("Dx.Cancer","Dx.CIN","Dx.HPV","Hinselmann","Schiller","Citology","Biopsy")
+
+datos_Dx2 <- reshapeLong(datos_Dx)
 ```
 
 
-boxplot
+Dada la importancia del consumo de tabaco en el desarrollo de muchos tipos de cáncer, también estamos interesados en la distribución de los dos grupos según la edad de las pacientes. 
 
-dotplot
+```{r}
+# Indicamos las variables a representar en los ejes x e y, además de indicar que las cajas se coloreen según el valor de la variable Smokes (con fill). Añadimos geom_boxplot para que se represente como un diagrama de cajas y geom_jitter para representar también los puntos en concreto que han dado lugar a ese boxplot. También cambiamos el color usando scale_fill_manual 
+ggplot(data=cervical_cancer, aes(x=Smokes,y=Age,fill=Smokes)) +
+  geom_boxplot() + geom_jitter(width=0.1,alpha=0.1) + ggtitle("Edad de las pacientes fumadoras y no fumadoras") + scale_fill_manual(values = c("steelblue2", "royalblue3"))
+```
 
+
+Para observar la relación entre dos variables numéricas, podemos realizar una representación en forma de dotplot, como haremos a modo de ejemplo para evaluar a simple vista si existe una relación entre la edad de la paciente y la edad a la que tuvo lugar el primer encuentro sexual, e identificar posibles variaciones que se relacionen con diferencias culturales entre generaciones.
+
+```{r}
+qplot(x=Age,y=First.sexual.intercourse, data=cervical_cancer, xlab="Edad", ylab="Edad a la primera relación sexual", colour=I("cadetblue")) + # Dentro de la función qplot especificamos las variables que queremos representar en los ejes x e y y el conjunto al que pertenecen, además añadimos títulos para ambos ejes y cambiamos el color con "colour". De nuevo debemos usar I() que indica que el objeto debe tratarse "tal cual" ya que si no se interpreta como un factor y no se selecciona el color correctamente.
+ggtitle("Edad de la paciente y edad a la primera relación sexual") # Añadimos el título añadiendo "ggtitle"
+```
+
+Es difícil extraer conclusiones de esta gráfica ya que no existe ninguna tendencia clara sobre la relación entre estas dos variables. Si quisiéramos explorar más esta asociación, deberíamos realizar análisis adicionales. 
+
+En general en este ejercicio hemos podido comprobar la utilidad de llevar a cabo un resumen estadístico y realizar algunas representaciones gráficas del conjunto de datos, ya que nos permite identificar a priori las relaciones entre las variables y sus características, así como plantear nuevas preguntas o análisis.
 
 
 ## Ejercicio 5
