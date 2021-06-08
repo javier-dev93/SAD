@@ -84,7 +84,7 @@ Como se ha comentado en el ejercicio previo, el conjunto de datos que hemos eleg
 ![Desgarga del conjunto de datos en formato csv](./images/ejercicio2.jpg "Desgarga del conjunto de datos en formato csv")
 
 ```{r}
-# Descargamos el conjunto de datos utilizando la función read.csv y los argumentos header=T para indicar que la primera fila del archivo csv realmente corresponde a los nombres de las columnas (headers), stringsAsFactors=F para que no se conviertan los caracteres a facor y por último na.strings para indicar que lo que aparece como una interrogación realmente es un valor faltante (NA)
+# Descargamos el conjunto de datos utilizando la función read.csv y los argumentos header=T para indicar que la primera fila del archivo csv realmente corresponde a los nombres de las columnas (headers), stringsAsFactors=F para que no se conviertan los caracteres a factor y por último na.strings para indicar que lo que aparece como una interrogación realmente es un valor faltante (NA)
 cervical_cancer <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/00383/risk_factors_cervical_cancer.csv",header=T, stringsAsFactors = F, na.strings="?")
 
 # Si quisiéramos cargar el archivo csv descargado, utilizaríamos el mismo comando, pero sustituyendo la url del enlace por la ruta al archivo
@@ -136,6 +136,7 @@ Una descripción un poco más detallada de las variables sería la siguiente:
 -   STDs..number.: Número de ETS
 
 Las siguientes variables son booleanas sobre si se ha detectado o no cada una de las ETS en específico:
+
   -   STDs.condylomatosis:
   -   STDs:cervical condylomatosis:
   -   STDs:vaginal condylomatosis
@@ -148,6 +149,7 @@ Las siguientes variables son booleanas sobre si se ha detectado o no cada una de
   -   STDs:HIV
   -   STDs:Hepatitis B
   -   STDs:HPV
+  
 -   STDs: Number of diagnosis: Número de diagnósticos de ETS
 -   STDs: Time since first diagnosis: Tiempo desde el primer diagnóstico de ETS
 -   STDs: Time since last diagnosis: Tiempo desde el último diagnóstico de ETS
@@ -166,7 +168,7 @@ Procedemos a recodificar las variables como factores
 # Primero definimos un objeto con los nombres de las columnas que vamos a recodificar
 columnas_booleanas <- c("Smokes","Hormonal.Contraceptives","IUD","STDs","STDs.condylomatosis","STDs.cervical.condylomatosis","STDs.vaginal.condylomatosis","STDs.vulvo.perineal.condylomatosis","STDs.syphilis","STDs.pelvic.inflammatory.disease","STDs.genital.herpes", "STDs.molluscum.contagiosum", "STDs.AIDS","STDs.HIV","STDs.Hepatitis.B","STDs.HPV", "Dx.Cancer","Dx.CIN","Dx.HPV","Dx","Hinselmann","Schiller","Citology","Biopsy")
 
-# Creamos un for loop que itere sobre las columnas que hemos especificado, y las recodifique como factor, especificando los nuevos factores
+# Creamos un for loop que itere sobre las columnas que hemos especificado, y las recodifique como factor, especificando los nuevos niveles
 for (columna in columnas_booleanas){
   cervical_cancer[,columna] <- factor(cervical_cancer[,columna], levels=c(0,1),labels=c("No","Yes"))
 }
@@ -231,7 +233,7 @@ En este caso vemos que hay registros de 858 mujeres, de las cuales 18 fueron dia
 
 ### Pregunta 3
 
-A la hora de hacer un estudio en cancer, la edad es una variable que tiene una gran relevancia, ya que las prevalencias pueden variar mucho según la edad de los pacientes. En el caso concreto del cáncer de cérvix, la mayoría de casos se diagnostican entre los 35 y los 44 años [**4**]. Por ello, sería útil conocer los valores mínimos y máximos de esta variable y ver las frecuencias según rangos de edad de, por ejemplo 10 años
+A la hora de hacer un estudio en cancer, la edad es una variable que tiene una gran relevancia, ya que las prevalencias pueden variar mucho según la edad de los pacientes. En el caso concreto del cáncer de cérvix, la mayoría de casos se diagnostican entre los 35 y los 44 años [**4**]. Por ello, sería útil conocer los valores mínimos y máximos de esta variable y ver las frecuencias según rangos de edad de, por ejemplo, 10 años
 
 ```{r}
 # Obtenemos el máximo usando "max"
@@ -248,7 +250,7 @@ De este modo comprobamos que la paciente de mayor edad tuvo 84 años y la de men
 
 ### Pregunta 4
 
-También relacionada con la edad, un factor importante en el cáncer de cervix es el estado menopáusico de la paciente. Si establecemos la edad a partir de la cual suele aparecer la menopausia (varía según la etnia, la establecemos en 49.7 años, que se corresponde con la edad media en Latino-América [**5**]) podemos definir una nueva columna "Menopause" que indique si la paciente es pre- o post-menopáusica.
+También relacionada con la edad, un factor importante en el cáncer de cervix es el estado menopáusico de la paciente. Si establecemos la edad a partir de la cual suele aparecer la menopausia (varía según la etnia, la establecemos en 49.7 años, que se corresponde con la edad media en Latinoamérica [**5**]) podemos definir una nueva columna "Menopause" que indique si la paciente es pre- o post-menopáusica.
 
 ```{r}
 # Creamos la variable directamente (indicada con $). Utilizamos la función ifelse, en la que establecemos una condición (en este caso que la edad sea superior a 49.7) y las dos alternativas ("yes" si la condición se cumple y "no" si no se cumple)
@@ -261,7 +263,7 @@ cervical_cancer$Menopause <- ifelse(cervical_cancer$Age >=49.7, "Yes", "No")
 Se ha reportado que el herpesvirus es una de las causas más frecuentes de cáncer de cervix en humanos [**6**]. ¿En cuántas pacientes de las diagnosticadas con cáncer de cervix se detectó infección por este virus? ¿Qué proporción representa con respecto al total de mujeres diagnosticadas con cáncer de cervix?
 
 ```{r}
-# Creamos un "subset" a partir de nuestro conjunto de datos, seleccionando las filas que cumplen las dos (indicado con el símbolo &) condicones (Dx.cancer=1 y Dx.HPV=1). Después, para saber el total de pacientes que cumplen ambas condiciones solo necesitamos saber el número de filas del conjunto (nrow)
+# Creamos un "subset" a partir de nuestro conjunto de datos, seleccionando las filas que cumplen las dos (indicado con el símbolo &) condiciones (Dx.cancer=1 y Dx.HPV=1). Después, para saber el total de pacientes que cumplen ambas condiciones solo necesitamos saber el número de filas del conjunto (nrow)
 nrow(cervical_cancer[(cervical_cancer$Dx.Cancer=="Yes" & cervical_cancer$Dx.HPV=="Yes"),])
 
 # Para calcular la proporción  dividimos el valor que acabamos de calcular entre el total de pacientes diagnosticadas con cáncer de cervix
@@ -315,7 +317,7 @@ library(ggplot2)
 ```
 
 
-En primer lugar, y dada la importancia de la edad en este tipo de estudios que ya hemos comentado, podemos realizar un histograma de esta variable, añadiéndole la línea de densidadpara ver cómo se distribuye.
+En primer lugar, y dada la importancia de la edad en este tipo de estudios que ya hemos comentado, podemos realizar un histograma de esta variable, añadiéndole la línea de densidad para ver cómo se distribuye.
 
 ```{r}
 hist(cervical_cancer$Age, breaks=20, col="aquamarine1", xlab="Edad de las pacientes", ylab="Frecuencia",main="Histograma de edad",xlim=c(0,85),freq=F) # Cambiamos el número de intervalos y coloreamos el histograma de azul, además de añadir títulos a los ejes y al gráfico completo y cambiar los límites del eje x para que aparezca entero
@@ -324,7 +326,7 @@ lines(density(cervical_cancer$Age),col="aquamarine4",lwd=3)
 
 En esta gráfica vemos que la distribución no es exactamente una distribución normal, si no que parece más sesgada hacia la izquierda, es decir, hay más pacientes de menores edades.
 
-Para evaluar de un vistazo los datos de las pruebas diagnósticas así como el diagnóstico final, podemos representarlas todas estas variables a la vez utilizando un barplot agrupado:
+Por otro lado, para evaluar de un vistazo los datos de las pruebas diagnósticas así como el diagnóstico final, podemos representarlas todas estas variables a la vez utilizando un barplot agrupado:
 
 
 ```{r}
@@ -359,6 +361,7 @@ ggplot(datos_Dx_long, aes(fill=id, y=count, x=Diagnosis)) +
 ggplot(datos_Dx_long, aes(fill=id, y=count, x=Diagnosis)) + 
     geom_bar(position="fill", stat="identity") + scale_fill_manual(values=c("darkseagreen","coral1")) + ylab("Frequency") + ggtitle("Proportion of yes/no for test/diagnosis") + theme(legend.title = element_blank()) 
 ```
+
 De nuevo, en ambas representaciones podemos comprobar que tenemos un sesgo importante hacia el valor "no" en todas las variables de pruebas o diagnóstico, lo cual es importante tener en cuenta a la hora de interpretar los resultados. 
 
 Dada la importancia del consumo de tabaco en el desarrollo de muchos tipos de cáncer, también estamos interesados en la distribución de los dos grupos según la edad de las pacientes. 
@@ -370,7 +373,7 @@ ggplot(data=cervical_cancer, aes(x=Smokes,y=Age,fill=Smokes)) +
 ```
 
 
-Para observar la relación entre dos variables numéricas, podemos realizar una representación en forma de dotplot, como haremos a modo de ejemplo para evaluar a simple vista si existe una relación entre la edad de la paciente y la edad a la que tuvo lugar el primer encuentro sexual, e identificar posibles variaciones que se relacionen con diferencias culturales entre generaciones.
+Finalmente, para observar la relación entre dos variables numéricas, podemos realizar una representación en forma de dotplot, como haremos a modo de ejemplo para evaluar a simple vista si existe una relación entre la edad de la paciente y la edad a la que tuvo lugar el primer encuentro sexual, e identificar posibles variaciones que se relacionen con diferencias culturales entre generaciones.
 
 ```{r}
 qplot(x=Age,y=First.sexual.intercourse, data=cervical_cancer, xlab="Edad", ylab="Edad a la primera relación sexual", colour=I("cadetblue")) + # Dentro de la función qplot especificamos las variables que queremos representar en los ejes x e y y el conjunto al que pertenecen, además añadimos títulos para ambos ejes y cambiamos el color con "colour". De nuevo debemos usar I() que indica que el objeto debe tratarse "tal cual" ya que si no se interpreta como un factor y no se selecciona el color correctamente.
@@ -417,8 +420,8 @@ Si tenemos una población de 200 mujeres ¿cual es la probabilidad de que 2 muje
 ```{r}
 dbinom(3,200,p_hpv)
 ```
-Mediante la función shadeDist de la librería fastGraph podemos dibujar las distribuciones, a la hora de
-dibujar la distribución la escala del eje x será de 20 mujeres, como veremos a partir de 10 mujeres la probabilidad tiende a cero.  
+
+Mediante la función shadeDist de la librería fastGraph podemos dibujar las distribuciones, a la hora de dibujar la distribución la escala del eje x será de 20 mujeres, como veremos a partir de 10 mujeres la probabilidad tiende a cero.  
 
 ```{r}
 
@@ -445,12 +448,14 @@ mujeres diagnosticadas de cancer y HPV. Tendríamos que calcular la probabilidad
 ```{r}
 pbinom(10, size=20, prob=p_hpv, lower.tail=FALSE)
 ```
+
 Mediante la función shadeDist de la librería fastGraph podemos dibujar las distribuciones.
 
 ```{r}
 shadeDist( 10, "dbinom",parm1=200,parm2=p_hpv, lower.tail=FALSE,xmin=0,
 xmax=20,xtic=c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20))
 ```
+
 Podemos ver que la probabilidad tiende a cero.
 
 ### Pregunta 4 - Simulación.
@@ -461,7 +466,7 @@ Se realiza la hipótesis de que la probabilidad de una mujer a ser diagnosticada
 
 Vamos a realizar una simulación partiendo de los valores observados y las probabilidades calculadas en las preguntas anteriores.
 
-Realizamos una simulación generando 1500 valores aleatorios suponiendo que para 858 mujeres observadas, hay una probabilidad de 0.0186669, de que estás sean diagnosticada de cancer y HPV.
+Realizamos una simulación generando 1500 valores aleatorios suponiendo que para 858 mujeres observadas, hay una probabilidad de 0.0186669, de que estás sean diagnosticadas de cáncer y HPV.
 
 Suponemos que se sigue un distribución binomial.
 
@@ -477,6 +482,7 @@ Dibujamos el histograma.
 #Representamos el histograma para la distribución generada).
 hist(sample_1500)
 ```
+
 Creamos la función de densidad sobre el histograma.
 
 ```{r}
@@ -538,10 +544,7 @@ cor(x=data_regresion,method="pearson")
 
 Analizando la matriz de coeficientes de pearson, tenemos que escoger el par de variables que tienen el coeficiente más cerca de 1. 
 
-Escogemos las variables:
-
-Age
-Num.of.pregnancies 
+A partir de esta matriz comprobamos que las variables Age y Num.of.pregnancies tienen una buena correlación, por lo que trataremos de predecir el número de embarazos de una mujer, ya que podría ser información útil, no solo a nivel epidemiológico si no en relación al cáncer de cérvix, ya que muchas veces el cáncer de cervix se puede diagnosticar de forma incidental en revisiones ordinarias de mujeres embarazadas **[2]**.
 
 
 ```{r}
@@ -558,7 +561,7 @@ abline(RegLin)
 ```
 
 
-El modelo de regresión tiene una R-squared de 0.2768, tenemos un ajuste de casi un 27%, sería un coeficiente bajo Si bien,  tenemos algunos puntos lejos de la linea de regresión, la mayoría de los puntos tienen una distribución uniforme en las proximidades de la linea.
+El modelo de regresión tiene una R-squared de 0.2768, tenemos un ajuste de casi un 27%, sería un coeficiente bajo Si bien, tenemos algunos puntos lejos de la linea de regresión, la mayoría de los puntos tienen una distribución uniforme en las proximidades de la linea.
 
 A continuación vamos a realizar el modelo de regresión múltiple, para los posibles predictores de Num.of.pregnancies.
 
@@ -580,7 +583,9 @@ Calculados los mejores predictores, realizamos de nuevo el modelo de regresión 
 RegLinMul_p <- lm(formula = cervical_cancer$Num.of.pregnancies ~ cervical_cancer$Age + cervical_cancer$First.sexual.intercourse, data = cervical_cancer)
 summary(RegLinMul_p)
 ```
-Podemos observar que el R-squared  0.3506, mejor respecto al cálculo anterior. Por lo tanto hemos mejorado el ajuste mediante la regresión lineal múltiple.
+
+Podemos observar que el R-squared  0.3506, mejor respecto al cálculo anterior. Por lo tanto hemos mejorado el ajuste mediante la regresión lineal múltiple. Sin embargo, sigue tratándose de un ajuste bastante pobre, lo que nos indica que con los datos de los que disponemos, no tenemos información suficiente para predecir el número de embarazos con cierta seguridad. 
+Esto puede deberse a que nos falta información sobre otras variables, y dada la cantidad de factores que pueden influir en el que una mujer se quede embarazada o no, se trataría de un análisis a gran escala que podría aun así  no dar buenos resultados de predicción, ya que muchas de las variables serían difíciles de monitorizar.
 
 ## Ejercicio 7
 
@@ -614,12 +619,13 @@ aggregate(First.sexual.intercourse~STDs,data=cervical_data_anova,FUN=mean)
 aggregate(First.sexual.intercourse~STDs,data=cervical_data_anova,FUN=sd)
 ```
 
-Podemos ver que parece haber una diferencia bastante pequeña entre la edad del primer encuentro sexual entre las pacientes que sí fueron diagnosticadas con cáncer y las que no, que es mayor en el primer grupo. Podemos realizar una representación gráfica para vez la distribución de los datos:
+Podemos ver que parece haber una diferencia bastante pequeña entre la edad del primer encuentro sexual entre las pacientes que sí fueron diagnosticadas con alguna ETS y las que no, que es mayor en el primer grupo. Podemos realizar una representación gráfica para vez la distribución de los datos:
 
 ```{r}
 # Usamos boxplot para crear un diagrama de cajas, cambiando las etiquetas de los ejes x e y y cambiando el color de la gráfica
 boxplot(First.sexual.intercourse~STDs,data=cervical_data_anova, ylab="Edad en la primera relación sexual", xlab="Diagnóstico de ETS", col="darkturquoise")
 ```
+
 Como ya podíamos ver en la comparación de medias, la diferencia entre ambos grupos parece muy sutil, aunque podemos continuar con el análisis para evaluar si esta diferencia puede ser considerada significativa. Antes de hacer el ANOVA debemos comprobar que las variables siguen una distribución normal y que tienen varianzas iguales (homocedasticidad).
 
 -   Para la normalidad:
@@ -674,9 +680,10 @@ En esta sección hemos trabajado con un conjunto de datos con un buen número de
 
 También hemos de tener en cuenta que existe un elevado número de _missing values_ debido a cuestiones de privacidad, sobre todo en lo que respecta a las enfermedades de transmisión sexual, lo que ha hecho que perdamos información o haya sido necesario imputar valores en algunos casos, posiblemente alterando el resultado final del análisis. Otro punto a mejorar del conjunto de datos sería especificar la información proporcionada sobre las técnicas de diagnóstico. Sabemos si las pruebas se realizaron o no, pero no tenemos datos sobre el resultado de la prueba en concreto. Por ejemplo, si hubiéramos tenido información histopatológica de la biopsia (número de mitosis por campo, porcentaje de necrosis...) podríamos haber incorporado estas variables al análisis de regresión o haberlas utilizado para el ANOVA, buscando valores límite que nos permitieran mejorar el diagnóstico o predecir el estado de una paciente y su prognosis.
 
-Además, y dada la relevancia de otras disciplinas de la bioinformática en el estudio del cáncer, sería interesante incorporar a este conjunto de datos otras variables que proporcionaran información sobre las características a nivel genómico, transcriptómico o proteómico de las pacientes analizadas, como una fuente añadida de información que permita encontrar herramientas para el diagnóstico temprano del cácner cervical. 
+Con respecto a los análisis de probabilidad y simulación, en esta PEC se ha mostrado un breve ejemplo de cómo, a partir de una "muestra" de la población general (este conjunto de datos como "representativo" de la población Venezolana en general, por ejemplo), podemos estimar la prevalencia/indicencia de una determinada condición, para tratar de evaluar la distribución de las variables y predecir el impacto o la frecuencia que podrían tener a nivel clínico.
 
-~~acabar~~
+Además, y dada la relevancia de otras disciplinas de la bioinformática en el estudio del cáncer, sería interesante incorporar a este conjunto de datos otras variables que proporcionaran información sobre las características a nivel genómico, transcriptómico o proteómico de las pacientes analizadas, como una fuente añadida de información que permita encontrar herramientas para el diagnóstico temprano del cánCer cervical. 
+
 
 # Sección 2. Análisis cluster con R
 
@@ -699,20 +706,20 @@ Como nuevo proyecto en el que aplicar las técnicas de agrupamiento vamos a sele
 -   STDs..Time.since.last.diagnosis
 
 
-Estás variables al tener distinta dimensión, habrá que realizar un escalado, por ejemplo, centrar las variables de forma que todas ellas tengan media 0 y desviación estándar 1.
+Dado que estas variables tienen distinta dimensión, habrá que realizar un escalado, por ejemplo, centrar las variables de forma que todas ellas tengan media 0 y desviación estándar 1.
 
-Una vez tratado los datos, procederemos a aplicar distintas técnicas de clustering, realizaremos el análisis de dos métodos.
+Una vez tratados los datos, procederemos a aplicar distintas técnicas de clustering para lo que realizaremos el análisis de dos métodos.
 
-- k vecionos más cercanos.
-- Estrategia jerarquica.
+- k vecinos más cercanos.
+- Estrategia jerárquica.
 
-Carga de librerias.
+Primero hacemos la carga de librerías:
 
 ```{r}
 library(cluster)
 ```
 
-Realizamos el tratamiento previo de los datos.
+Realizamos el tratamiento previo de los datos:
 
 ```{r}
 # Creamos el dataset con las variables de dimensión continua.
@@ -802,6 +809,7 @@ Mostramos en una gráfica los valores de las silueta media de cada prueba para a
 ```{r}
 plot(2:10,resultados[2:10],type="o",col="blue",pch=0,xlab="Numbero de clusters",ylab="Silueta")
 ```
+
 Podemos observar que el mejor valor que se obtiene es para k=2.
 
 Evaluamos el mejor número de clusters como aquel que ofrece la menor suma de los cuadrados de las distancias de los puntos de cada grupo con respecto a su centro, con la mayor separación entre centros de grupos.
@@ -847,6 +855,7 @@ Evaluamos el mejor número de clusters en función del criterio de la silueta me
 ```{r}
 plot(1:10,fit_asw$crit,type="o",col="blue",pch=0,xlab="Numero de clusters",ylab="Criterio silueta media")
 ```
+
 El mejor valor se obtiene para k=3.
 
 Aplicamos el algoritmo kmeans con 2, 4 y 8 clusters.
@@ -942,7 +951,7 @@ Hemos probado el modelo varias veces con distintos número de registros, partien
 
 La agrupación por kmeans nos da buenos resultados para dos clusters k = 2.
 
-Conforme aumentamos el número de ejemplos a tratar, la mayoría de los ejemplos se clasifican en el cluster 1, mientras que una minoria de ejemplos se clasifican en el cluster 2.
+Conforme aumentamos el número de ejemplos a tratar, la mayoría de los ejemplos se clasifican en el cluster 1, mientras que una minoría de ejemplos se clasifican en el cluster 2.
 
 También se puede observar que la calidas de la agregación va disminuyendo conforme aumentan los ejemplos que tratamos, en todos los casos siempre la agrupación con 2 cluster da mejor resultados.
 
@@ -950,19 +959,17 @@ En el cluster 1 se clasificarán .....
 
 En el cluster 2 se clasificarán .....
 
--Estrategia Jerarquica
+- Estrategia Jerárquica
 
-La estrategía jerarquica consiste en dados ejemplos sin etiquetar descritos por valores de atributos, obtener una jerarquía de clases que incluya cada una a un subconjunto de los ejemplos de entrenamiento.
+La estrategía jerárquica consiste en, dados ejemplos sin etiquetar descritos por valores de atributos, obtener una jerarquía de clases que incluya cada una a un subconjunto de los ejemplos de entrenamiento.
 
-Estas jerarquias se denominan dendogramas, donde cada nodo representa una clase de observaciones.
+Estas jerarquías se denominan dendogramas, donde cada nodo representa una clase de observaciones.
 
-La entradas son un conjunto de ejemplos de entrenamiento descritos por un conjunto de atributos y sus valores respectivos.
+Las entradas son un conjunto de ejemplos de entrenamiento descritos por un conjunto de atributos y sus valores respectivos. La salida es una jerarquía de clases (dendograma).
 
-Las salidas es una jerarquía de clases(dendograma).
+Estas estrategias se dividen en dos métodos, aglomerativa y divisional.
 
-Se dividen en dos métodos, aglomerativa y divisional.
-
--Estrategia Aglomerativa.
+- Estrategia Aglomerativa.
 
 A cada observación se le asigna a su propio cluster, seguidamente se calcula la similitud entre cada uno de los clusters. Los clusters más similares se fusionan en uno; se repiten los pasos hasta que solo quede uno.
 
@@ -998,13 +1005,13 @@ hc2$ac
 
 Valores cercanos a 1 establecen una estructura de agrupamiento fuerte.
 
-La función cutree asigna clusters a los puntos dados.
+La función `cutree` asigna clusters a los puntos dados.
 
 ```{r}
 clust <- cutree(hc2, k = 2)
 ```
 
-Cargamos libreria factoextra
+Cargamos libreria `factoextra`
 
 ```{r}
 
@@ -1021,7 +1028,7 @@ Gráfico del diagrama de dispersión.
 fviz_cluster(list(data = x, cluster = clust))  ## from ‘factoextra’ package
 ```
 
--Estrategia Divisional
+- Estrategia Divisional
 
 Todas las observaciones pertenecen a un grupo, seguidamente se divide el cluster en dos grupos menos similares. Esto se repite recursivamente en cada grupo hasta que haya solo un grupo para cada observación.
 
