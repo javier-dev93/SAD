@@ -81,7 +81,7 @@ Las tasas de éxito de estos tratamientos son variables, por lo que gran parte d
 
 Como se ha comentado en el ejercicio previo, el conjunto de datos que hemos elegido se ha obtenido de un repositorio, por lo que podemos utilizar la url directamente para descargar los datos. De todos modos, descargamos los datos para que se puedan cargar desde el archivo csv como se muestra en la siguiente captura por si en algún momento no funcionara el enlace.
 
-![Desgarga del conjunto de datos en formato csv](C:/Users/alba_/GDrive UOC (amachadolopez@uoc.edu)/Software_analisis/PEC3/SAD/images/ejercicio2.jpg "Desgarga del conjunto de datos en formato csv")
+![Desgarga del conjunto de datos en formato csv](./images/ejercicio2.jpg "Desgarga del conjunto de datos en formato csv")
 
 ```{r}
 # Descargamos el conjunto de datos utilizando la función read.csv y los argumentos header=T para indicar que la primera fila del archivo csv realmente corresponde a los nombres de las columnas (headers), stringsAsFactors=F para que no se conviertan los caracteres a facor y por último na.strings para indicar que lo que aparece como una interrogación realmente es un valor faltante (NA)
@@ -386,14 +386,105 @@ En general en este ejercicio hemos podido comprobar la utilidad de llevar a cabo
 
 <span style="color: SteelBlue;">Realizad, basándoos en los conceptos trabajados en el LAB4 y PEC2, un mínimo de tres enunciados que respondan a una cuestión de probabilidad y un mínimo de un enunciado que corresponda a un breve modelo de simulación. En este caso, si vuestro conjunto de datos no propicia estos enunciados, podéis generar una o diversas distribuciones en base a unos parámetros determinados definidos por vosotros.</span>
 
-~~algo relacionado con el tema de la incidencia/prevalencia?~~ 
-~~se puede simular una distribución a partir de nuestros datos?~~
+### Pregunta 1 - Probabilidad.
 
+Tenemos los siguientes datos:
+
+De una población de 858 mujeres 18 fueron diagnosticadas de cancer de cervix, un 2,10%.
+
+De las 18 mujeres diagnosticadas de cancer de cervix 16 fueron también diagnosticadas con HPV, es decir un 88,89%
+
+P(Mujer Cancer) = 0.0210
+P(Mujer HPV/Mujer Cancer) = 0.8889
+
+El teorema de la probabilidad total hace inferencia estadística sobre un suceso B, a partir del resultado de un suceso A.
+
+Siendo A la probabilidad de que una mujer sea diagnosticada de cancer de cervix y el sueceso B la probabilidad de que sea diagnosticada de HPV.
+
+Por lo tanto la probabilidad de una mujer sea diagnosticada de cancer y de HPV.
+
+P(HPV) = P(HPV/Mujeres Cancer)· P(Mujeres Cancer) = 0.8889·0.0210
+
+```{r}
+p_hpv = 0.8889*0.0210
+p_hpv
+```
+
+### Pregunta 2 - Probabilidad.
+
+Si tenemos una población de 200 mujeres ¿cual es la probabilidad de que 2 mujeres diagnosticadas de cancer esten diagnosticadas de HPV?
+
+```{r}
+dbinom(3,200,p_hpv)
+```
+Mediante la función shadeDist de la librería fastGraph podemos dibujar las distribuciones, a la hora de
+dibujar la distribución la escala del eje x será de 20 mujeres, como veremos a partir de 10 mujeres la probabilidad tiende a cero.  
 
 ```{r}
 
+if(!require(fastGraph)){
+    install.packages('fastGraph', repos='http://cran.us.r-project.org')
+    library(fastGraph)
+}
 ```
 
+
+```{r}
+shadeDist( c(2,3), "dbinom",parm1=200,parm2=p_hpv, lower.tail=FALSE,xmin=0,
+xmax=20,xtic=c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20))
+```
+
+
+### Pregunta 3 - Probabilidad.
+
+¿Cuál es la probabilidad de que mas de 10 mujeres sean diagnosticadas de cancer y esten diagnosticadas de HPV?
+
+La probabilidad de encontrar más de 10 casos, será la probabilidad acumulada de encontrar más de 10
+mujeres diagnosticadas de cancer y HPV. Tendríamos que calcular la probabilidad acumulada de X mujeres, donde X>10 (4,5,6,7,8…), a medida que aumentamos el número de mujeres, la probabilidad de cada valor se aproximara a cero.
+
+```{r}
+pbinom(10, size=20, prob=p_hpv, lower.tail=FALSE)
+```
+Mediante la función shadeDist de la librería fastGraph podemos dibujar las distribuciones.
+
+```{r}
+shadeDist( 10, "dbinom",parm1=200,parm2=p_hpv, lower.tail=FALSE,xmin=0,
+xmax=20,xtic=c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20))
+```
+Podemos ver que la probabilidad tiende a cero.
+
+### Pregunta 4 - Simulación.
+
+Realizamos una simulación 
+
+Se realiza la hipótesis de que la probabilidad de una mujer a ser diagnosticada de cancer de cervix y que previamente esté diagnosticada de HPV
+
+Vamos a realizar una simulación partiendo de los valores observados y las probabilidades calculadas en las preguntas anteriores.
+
+Realizamos una simulación generando 1500 valores aleatorios suponiendo que para 858 mujeres observadas, hay una probabilidad de 0.0186669, de que estás sean diagnosticada de cancer y HPV.
+
+Suponemos que se sigue un distribución binomial.
+
+```{r}
+set.seed(666666)
+#Generamos 1500 valores aleatorios suponiendo que para 858 mujeres observadas,la probabilidad de que tengan cancer de cervix y HPV sea 0.0186669.
+sample_1500 <- rbinom(1500,858,p_hpv)
+```
+
+Dibujamos el histograma.
+
+```{r}
+#Representamos el histograma para la distribución generada).
+hist(sample_1500)
+```
+Creamos la función de densidad sobre el histograma.
+
+```{r}
+#Creamos el histograma con el argumento freq=F.
+hist(sample_1500, freq = F)
+#Creamos la función densidad sobre el histograma.
+lines(density(sample_1500))
+```
 
 ## Ejercicio 6
 
@@ -401,14 +492,95 @@ En general en este ejercicio hemos podido comprobar la utilidad de llevar a cabo
 
 Como ya se ha comentado, el diagnóstico de enfermedades de transmisión sexual (como el HPV) pueden ser de gran relevancia en el cáncer de cervix. Nos planteamos si, utilizando el resto de variables del conjunto (correspondientes principalmente a información sobre hábitos de vida) podemos crear un modelo que prediga el número de ETS que puede sufrir la paciente.
 
+A la hora de realizar un análisis de regresión lineal tenemos que tener en cuenta que las variables a escoger tienen que ser continuas.
+
+Analizamos las variables del dataset
 
 ```{r}
+str(cervical_cancer)
+```
+Por lo tanto seleccionamos las variables dimensión continua del dataset.
+
+-   Age: Edad (int)
+-   Number.of.sexual.partners: Número de parejas sexuales (int)
+-   First.sexual.intercourse: Edad a la que se tuvo la primera relación sexual
+-   Num.of.pregnancies: Número de embarazos
+-   Smokes..years.: Tiempo que la mujer es fumadora en años
+-   Smokes..packs.year.: Número de paquetes de tabaco al año
+-   Hormonal.Contraceptives..years.: Tiempo de uso de anticonceptivos hormonales en años
+-   IUD..years.: Tiempo de Uso de DIU en años
+-   STDs..number.: Número de ETS
+-   STDs..Time.since.first.diagnosis
+-   STDs..Time.since.last.diagnosis
+
+
+```{r}
+# Creamos el dataset con las variables de dimensión continua.
+data_regresion <- data.frame(cervical_cancer$Age,cervical_cancer$Number.of.sexual.partners,cervical_cancer$First.sexual.intercourse,cervical_cancer$Num.of.pregnancies,cervical_cancer$Smokes..years,cervical_cancer$Smokes..packs.year,cervical_cancer$Hormonal.Contraceptives..years,cervical_cancer$IUD..years,cervical_cancer$STDs..number,cervical_cancer$STDs..Number.of.diagnosis,cervical_cancer$STDs..Time.since.first.diagnosis,cervical_cancer$STDs..Time.since.last.diagnosis
+)
+
+# Corregimos el nombre de las columnas del nuevo dataframe
+colnames(data_regresion) <- c("Age","Number.of.sexual.partners","First.sexual.intercourse","Num.of.pregnancies","Smokes..years","Smokes..packs.year","Hormonal.Contraceptives..years","IUD..years","STDs..number","STDs..Number.of.diagnosis","STDs..Time.since.first.diagnosis","STDs..Time.since.last.diagnosis")
 
 ```
 
-```{r}
+Inicialmente calculamos el coeficiente de correlación de Pearson para las distintas combinaciones.
 
+```{r}
+#Creamos la matriz de correlaciones de pearson, para ver si hay correlación entre las variables.
+cor(x=data_regresion,method="pearson")
 ```
+
+```{r}
+#Realizamos gráficos de dispersión de todas la variables.
+#pairs(datos_reg)
+```
+
+Analizando la matriz de coeficientes de pearson, tenemos que escoger el par de variables que tienen el coeficiente más cerca de 1. 
+
+Escogemos las variables:
+
+Age
+Num.of.pregnancies 
+
+
+```{r}
+#Creamos el modelo de regresión lineal.
+RegLin=lm(formula=Age~Num.of.pregnancies,data=data_regresion)
+summary(RegLin)
+```
+```{r}
+#Representamos el diagrama de puntos y la linea de regresión
+plot(cervical_cancer$Num.of.pregnancies,cervical_cancer$Age, xlab="Num.of.pregnancies", ylab="Age") 
+#plot(cervical_cancer$Age,cervical_cancer$Num.of.pregnancies, xlab="Age", ylab="Num.of.pregnancies") 
+
+abline(RegLin)
+```
+
+
+El modelo de regresión tiene una R-squared de 0.2768, tenemos un ajuste de casi un 27%, sería un coeficiente bajo Si bien,  tenemos algunos puntos lejos de la linea de regresión, la mayoría de los puntos tienen una distribución uniforme en las proximidades de la linea.
+
+A continuación vamos a realizar el modelo de regresión múltiple, para los posibles predictores de Num.of.pregnancies.
+
+```{r}
+#Generamos el modelo de regresión múltiple
+RegLinMul <- lm(cervical_cancer$Num.of.pregnancies~cervical_cancer$Age+cervical_cancer$Number.of.sexual.partners+cervical_cancer$First.sexual.intercourse+cervical_cancer$Smokes..years+cervical_cancer$Smokes..packs.year+cervical_cancer$Hormonal.Contraceptives..years+cervical_cancer$IUD..years+cervical_cancer$STDs..number+cervical_cancer$STDs..Number.of.diagnosis+cervical_cancer$STDs..Time.since.first.diagnosis+cervical_cancer$STDs..Time.since.last.diagnosis,data=cervical_cancer) 
+
+summary(RegLinMul)
+```
+Hemos calculado los coeficientes de los predictores posibles, ahora entre todos ellos seleccionamos los mejores.
+
+```{r}
+step(object=RegLinMul,direction ="both", trace=1)
+```
+
+Calculados los mejores predictores, realizamos de nuevo el modelo de regresión sobre estos.
+
+```{r}
+RegLinMul_p <- lm(formula = cervical_cancer$Num.of.pregnancies ~ cervical_cancer$Age + cervical_cancer$First.sexual.intercourse, data = cervical_cancer)
+summary(RegLinMul_p)
+```
+Podemos observar que el R-squared  0.3506, mejor respecto al cálculo anterior. Por lo tanto hemos mejorado el ajuste mediante la regresión lineal múltiple.
 
 ## Ejercicio 7
 
@@ -508,15 +680,398 @@ Además, y dada la relevancia de otras disciplinas de la bioinformática en el e
 
 # Sección 2. Análisis cluster con R
 
+En esta sección vamos a desarrollar un análisis cluster en R. Partimos del dataset de la sección 1, Cervical cancer (Risk Factors) Data Set.
+
+Tenemos que tener en cuenta que para aplicar técnicas de agrupamiento basadas en aprendizaje no supervisado las variables a considerar no tienen que estar etiquetadas y tienen que ser continuas.
+
+Como nuevo proyecto en el que aplicar las técnicas de agrupamiento vamos a seleccionar una serie de variables de dimensión continua del dataset.
+
+-   Age: Edad (int)
+-   Number.of.sexual.partners: Número de parejas sexuales (int)
+-   First.sexual.intercourse: Edad a la que se tuvo la primera relación sexual
+-   Num.of.pregnancies: Número de embarazos
+-   Smokes..years.: Tiempo que la mujer es fumadora en años
+-   Smokes..packs.year.: Número de paquetes de tabaco al año
+-   Hormonal.Contraceptives..years.: Tiempo de uso de anticonceptivos hormonales en años
+-   IUD..years.: Tiempo de Uso de DIU en años
+-   STDs..number.: Número de ETS
+-   STDs..Time.since.first.diagnosis
+-   STDs..Time.since.last.diagnosis
+
+
+Estás variables al tener distinta dimensión, habrá que realizar un escalado, por ejemplo, centrar las variables de forma que todas ellas tengan media 0 y desviación estándar 1.
+
+Una vez tratado los datos, procederemos a aplicar distintas técnicas de clustering, realizaremos el análisis de dos métodos.
+
+- k vecionos más cercanos.
+- Estrategia jerarquica.
+
+Carga de librerias.
 
 ```{r}
+library(cluster)
+```
 
+Realizamos el tratamiento previo de los datos.
+
+```{r}
+# Creamos el dataset con las variables de dimensión continua.
+data_cluster <- data.frame(cervical_cancer$Age,cervical_cancer$Number.of.sexual.partners,cervical_cancer$First.sexual.intercourse,cervical_cancer$Num.of.pregnancies,cervical_cancer$Smokes..years,cervical_cancer$Smokes..packs.year,cervical_cancer$Hormonal.Contraceptives..years,cervical_cancer$IUD..years,cervical_cancer$STDs..number,cervical_cancer$STDs..Number.of.diagnosis,cervical_cancer$STDs..Time.since.first.diagnosis,cervical_cancer$STDs..Time.since.last.diagnosis
+)
+# Renombramos los campos.
+names(data_cluster) <- c("X1","X2","X3","X4","X5","X6","X7","X8","X9","X10","X11","X12")
+```
+
+Dimensiones de los datos.
+
+```{r}
+dim(data_cluster)
+```
+Estructura de los datos.
+
+```{r}
+str(data_cluster)
+```
+
+Realizamos un backup de los datos.
+
+```{r}
+# Backup datos
+data_cluster_backup <- data_cluster
+```
+
+Comprobamos los atributos con valores vacíos.
+
+```{r}
+# Estadísticas de valores vacíos
+colSums(is.na(data_cluster))
+```
+
+```{r}
+# Estadísticas de valores ""
+colSums(data_cluster=="")
+```
+
+```{r}
+# Estadísticas de valores ?
+colSums(data_cluster=="?")
+```
+
+Vamos a usar las 4 primeras variables.
+
+```{r}
+data_cluster <- data_cluster[,1:4]
+```
+
+Desordenamos los datos.
+
+```{r}
+set.seed(666)
+data_random <- data_cluster[sample(nrow(data_cluster)),]
+```
+
+Vamos a usar como muestra para el modelo un subconjunto de los datos, 200 ejemplos.
+
+```{r}
+x <- data_random[1:200,]
+```
+
+Escalamos todas las variables numéricas. Cada variable ahora tendrá una media cero y una desviación estándar uno. Este escalado hará que la desviación estándar sea la unidad de medida en cada coordenada.
+
+```{r}
+x <- scale(x)
+```
+ 
+Desconocemos a priori el número optimo de clusters, vamos a probar con varios valores.
+
+```{r}
+d <- daisy(x) 
+resultados <- rep(0, 10)
+for (i in c(2,3,4,5,6,7,8,9,10))
+{
+  fit           <- kmeans(x, i)
+  y_cluster     <- fit$cluster
+  sk            <- silhouette(y_cluster, d)
+  resultados[i] <- mean(sk[,3])
+}
+
+```
+
+Mostramos en una gráfica los valores de las silueta media de cada prueba para averiguar que número de clusters es mejor.
+
+```{r}
+plot(2:10,resultados[2:10],type="o",col="blue",pch=0,xlab="Numbero de clusters",ylab="Silueta")
+```
+Podemos observar que el mejor valor que se obtiene es para k=2.
+
+Evaluamos el mejor número de clusters como aquel que ofrece la menor suma de los cuadrados de las distancias de los puntos de cada grupo con respecto a su centro, con la mayor separación entre centros de grupos.
+
+```{r}
+resultados <- rep(0, 10)
+for (i in c(2,3,4,5,6,7,8,9,10))
+{
+  fit           <- kmeans(x, i)
+  resultados[i] <- fit$tot.withinss
+}
+plot(2:10,resultados[2:10],type="o",col="blue",pch=0,xlab="Numbero de clusters",ylab="tot.tot.withinss")
+```
+
+No queda claro el “codo” en la curva.
+
+Ejecutamos la función kmeansruns que ejecuta el algoritmo kmeans con un conjunto de valores y selecciona el valor del número de clusters que mejor funcione de acuerdo a dos criterios la silueta media (“asw”) y Calinski-Harabasz (“ch”).
+
+```{r}
+library(fpc)
+
+fit_ch  <- kmeansruns(x, krange = 1:10, criterion = "ch") 
+fit_asw <- kmeansruns(x, krange = 1:10, criterion = "asw") 
+
+fit_ch$bestk
 ```
 
 
 ```{r}
-
+fit_asw$bestk
 ```
+
+Evaluamos el mejor núnero de clusters en función Calinski-Harabasz.
+
+```{r}
+plot(1:10,fit_ch$crit,type="o",col="blue",pch=0,xlab="Numero de clusters",ylab="Criterio Calinski-Harabasz")
+```
+
+El mejor valor se obtiene para k=4.
+
+Evaluamos el mejor número de clusters en función del criterio de la silueta media.
+
+```{r}
+plot(1:10,fit_asw$crit,type="o",col="blue",pch=0,xlab="Numero de clusters",ylab="Criterio silueta media")
+```
+El mejor valor se obtiene para k=3.
+
+Aplicamos el algoritmo kmeans con 2, 4 y 8 clusters.
+
+```{r}
+fit2       <- kmeans(x, 2)
+y_cluster2 <- fit2$cluster
+
+fit4       <- kmeans(x, 4)
+y_cluster4 <- fit4$cluster
+
+fit8       <- kmeans(x, 8)
+y_cluster8 <- fit8$cluster
+```
+
+Visualizamos los clusters con la función clusplot.
+
+Gráfica 2 Clusters.
+
+```{r}
+clusplot(x, fit2$cluster, color=TRUE, shade=TRUE, labels=2, lines=0)
+```
+
+Gráfica 4 Clusters.
+
+```{r}
+clusplot(x, fit4$cluster, color=TRUE, shade=TRUE, labels=2, lines=0)
+```
+
+Gráfica 8 Clusters.
+
+```{r}
+clusplot(x, fit8$cluster, color=TRUE, shade=TRUE, labels=2, lines=0)
+```
+
+También podemos visualizar el resultado del proceso de agrupamiento con el siguiente código para el caso de 2 clusters.
+
+```{r}
+plot(x[y_cluster2==1,],col='blue', xlim=c(min(x[,1]), max(x[,1])), ylim=c(min(x[,2]), max(x[,2])))
+points(x[y_cluster2==2,],col='red')
+```
+
+Para el caso de  4 clusters
+
+```{r}
+plot(x[y_cluster4==1,],col='blue', xlim=c(min(x[,1]), max(x[,1])), ylim=c(min(x[,2]), max(x[,2])))
+points(x[y_cluster4==2,],col='red')
+points(x[y_cluster4==3,],col='green')
+points(x[y_cluster4==4,],col='black')
+```
+
+Finalmente para el caso de 8 clusters.
+
+```{r}
+plot(x[y_cluster8==1,],col='blue', xlim=c(min(x[,1]), max(x[,1])), ylim=c(min(x[,2]), max(x[,2])))
+points(x[y_cluster8==2,],col='red')
+points(x[y_cluster8==3,],col='green')
+points(x[y_cluster8==4,],col='black')
+points(x[y_cluster8==5,],col='yellow')
+points(x[y_cluster8==6,],col='purple')
+points(x[y_cluster8==7,],col='cyan')
+points(x[y_cluster8==8,],col='orange')
+```
+
+Evaluamos la calidad de la agregación. Usamos la función silhouette, calcula la silueta de cada muestra.
+
+```{r}
+d  <- daisy(x) 
+sk2 <- silhouette(y_cluster2, d)
+sk4 <- silhouette(y_cluster4, d)
+sk8 <- silhouette(y_cluster8, d)
+```
+
+La función silhouette devuelve para cada muestra, el cluster donde ha sido asignado, el cluster vecino y el valor de la silueta. Por lo tanto, calculando la media de la tercera columna podemos obtener una estimación de la calidad del agrupamiento.
+
+```{r}
+mean(sk2[,3])
+```
+
+```{r}
+mean(sk4[,3])
+```
+
+```{r}
+mean(sk8[,3])
+```
+
+Como se puede comprobar, agrupar con dos cluster es mejor que en 4 o en 8.
+
+Conclusiones:
+
+Hemos probado el modelo varias veces con distintos número de registros, partiendo de 50 ejemplos hasta 200.
+
+La agrupación por kmeans nos da buenos resultados para dos clusters k = 2.
+
+Conforme aumentamos el número de ejemplos a tratar, la mayoría de los ejemplos se clasifican en el cluster 1, mientras que una minoria de ejemplos se clasifican en el cluster 2.
+
+También se puede observar que la calidas de la agregación va disminuyendo conforme aumentan los ejemplos que tratamos, en todos los casos siempre la agrupación con 2 cluster da mejor resultados.
+
+En el cluster 1 se clasificarán .....
+
+En el cluster 2 se clasificarán .....
+
+-Estrategia Jerarquica
+
+La estrategía jerarquica consiste en dados ejemplos sin etiquetar descritos por valores de atributos, obtener una jerarquía de clases que incluya cada una a un subconjunto de los ejemplos de entrenamiento.
+
+Estas jerarquias se denominan dendogramas, donde cada nodo representa una clase de observaciones.
+
+La entradas son un conjunto de ejemplos de entrenamiento descritos por un conjunto de atributos y sus valores respectivos.
+
+Las salidas es una jerarquía de clases(dendograma).
+
+Se dividen en dos métodos, aglomerativa y divisional.
+
+-Estrategia Aglomerativa.
+
+A cada observación se le asigna a su propio cluster, seguidamente se calcula la similitud entre cada uno de los clusters. Los clusters más similares se fusionan en uno; se repiten los pasos hasta que solo quede uno.
+
+La función dist calcula los valores de la distancia, el método que vamos a usar es la distancia euclidea.
+
+```{r}
+# Cálculo de los valores de la distancia.
+d <- dist(x, method = "euclidean")
+```
+
+La función hclust calcula el agrupamiento jerarquico aglomerativo, requiere la distancia y el método de vinculación.
+
+```{r}
+# Calculamos el agrupamiento jerárquico aglomerativo.
+hc1 <- hclust(d, method = "complete" )
+```
+
+Gráfico del dendograma.
+
+```{r}
+# Gráfico del dendograma
+plot(hc1, cex = 0.6, hang = -1)
+```
+
+
+La función agnes calcula el coeficiente de aglomeración, que mide la estructura de agrupamiento encontrada.
+
+```{r}
+hc2 <- agnes(x, method = "complete")
+# Coeficiente de aglomeración.
+hc2$ac
+```
+
+Valores cercanos a 1 establecen una estructura de agrupamiento fuerte.
+
+La función cutree asigna clusters a los puntos dados.
+
+```{r}
+clust <- cutree(hc2, k = 2)
+```
+
+Cargamos libreria factoextra
+
+```{r}
+
+if(!require(factoextra)){
+    install.packages('factoextra', repos='http://cran.us.r-project.org')
+    library(factoextra)
+}
+```
+
+
+Gráfico del diagrama de dispersión.
+
+```{r}
+fviz_cluster(list(data = x, cluster = clust))  ## from ‘factoextra’ package
+```
+
+-Estrategia Divisional
+
+Todas las observaciones pertenecen a un grupo, seguidamente se divide el cluster en dos grupos menos similares. Esto se repite recursivamente en cada grupo hasta que haya solo un grupo para cada observación.
+
+La función diana calcula el coeficiente de división, que mide la estructura de división encontrada.
+
+```{r}
+hc4 <- diana(x)
+# Coeficiente de división.
+hc4$dc
+```
+
+Valores cercanos a 1 establecen una estructura de división fuerte.
+
+Gráfico del dendograma.
+
+```{r}
+# Gráfico del dendograma.
+pltree(hc4, cex = 0.6, hang = -1, main = "Dendrogram of diana")
+```
+
+La función cutree asigna clusters a los puntos dados.
+
+```{r}
+clust <- cutree(hc4, k = 2)
+```
+
+Gráfico del diagrama de dispersión.
+
+```{r}
+fviz_cluster(list(data = x, cluster = clust))  ## from ‘factoextra’ package
+```
+
+Algunos ejemplos en el cluster 2 de kmeans
+
+```{r}
+data_cluster_backup[6,9]
+```
+
+```{r}
+#data_backup[3833,9]
+```
+
+```{r}
+#data_backup[4704,9]
+```
+
+```{r}
+#data_backup[7233,9]
+```
+
 
 
 # Referencias
